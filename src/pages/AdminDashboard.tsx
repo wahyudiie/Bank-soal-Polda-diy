@@ -388,7 +388,7 @@ const ManageUsers = ({ users }: { users: User[] }) => (
 
 import { supabaseService } from '../services/supabaseService';
 import { Question, User, QuestionCategory, QuizResult } from '../types';
-...
+
 export default function AdminDashboard() {
   const user = mockService.getCurrentUser()!;
   const location = useLocation();

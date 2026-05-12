@@ -109,29 +109,32 @@ export default function Login() {
             <img 
               src="/logo-polda.jpeg" 
               alt="Logo Polda DIY" 
-              className="w-12 h-auto"
+              className="w-10 sm:w-12 h-auto"
             />
-            <div className="flex flex-col">
-              <span className="text-sm font-black tracking-tight text-[#002147] uppercase leading-none">Bank Soal Online</span>
-              <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold mt-1">Polda D.I. Yogyakarta</span>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-sm font-black text-[#002147] uppercase leading-none">Bank Soal Online</span>
+              <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Polda D.I. Yogyakarta</span>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-10">
-            {navigation.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-[10px] font-bold text-gray-600 hover:text-[#002147] uppercase tracking-widest transition-colors"
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
+          <nav className="hidden lg:block">
+            <ul className="flex items-center gap-8">
+              {navigation.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => scrollToSection(item.id)}
+                    className="text-[10px] font-black text-gray-400 hover:text-[#002147] uppercase tracking-[0.2em] transition-colors"
+                  >
+                    {item.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           <button 
             onClick={() => scrollToSection('login-form')}
-            className="bg-[#002147] text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[#003366] transition-all shadow-lg shadow-blue-900/10"
+            className="bg-[#002147] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#003366] transition-all shadow-lg shadow-blue-900/10"
           >
             Masuk Sistem
           </button>
@@ -164,10 +167,8 @@ export default function Login() {
               <ShieldCheck className="w-6 h-6" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">Polda D.I. Yogyakarta</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-[#0F172A] leading-tight mb-8">
-              Bank Soal <br />
-              <span className="text-blue-600">Online Digital</span> <br />
-              Polda DIY
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-black text-[#0F172A] leading-tight mb-6 sm:mb-8">
+              Bank Soal <span className="text-blue-600">Online Digital</span> Polda DIY
             </h1>
             <p className="text-gray-600 text-lg max-w-lg mb-10">
               Akses materi ujian dinas, pengembangan karir, dan peningkatan wawasan kepolisian bagi seluruh personel Polda D.I. Yogyakarta.

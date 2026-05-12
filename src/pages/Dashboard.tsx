@@ -40,11 +40,11 @@ export default function Dashboard() {
             <h2 className="text-4xl font-black text-[#002147] tracking-tight">Katalog Bank Soal</h2>
             <p className="text-gray-500 mt-3 font-semibold text-sm max-w-lg leading-relaxed">Akses repositori digital materi persiapan ujian kepolisian daerah daerah istimewa yogyakarta.</p>
           </div>
-          <div className="flex bg-white p-1.5 rounded-full border border-gray-100 shadow-sm">
+          <div className="flex bg-white p-1.5 rounded-full border border-gray-100 shadow-sm overflow-x-auto whitespace-nowrap no-scrollbar max-w-full">
             <button 
               onClick={() => setSelectedCategory(null)}
               className={cn(
-                "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
                 selectedCategory === null ? "bg-[#002147] text-white shadow-lg" : "text-gray-400 hover:text-[#002147]"
               )}
             >
@@ -55,7 +55,7 @@ export default function Dashboard() {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={cn(
-                  "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                  "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
                   selectedCategory === cat.id ? "bg-[#002147] text-white shadow-lg" : "text-gray-400 hover:text-[#002147]"
                 )}
               >

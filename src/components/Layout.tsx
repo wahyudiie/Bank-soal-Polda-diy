@@ -20,9 +20,16 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, user }: LayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    // Close sidebar on navigation on mobile
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [location]);
 
   const handleLogout = () => {
     mockService.logout();
@@ -40,11 +47,19 @@ export default function Layout({ children, user }: LayoutProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-[#002147]/20 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
-          "bg-white text-[#0F172A] border-r border-gray-100 transition-all duration-300 ease-in-out z-30 flex flex-col shrink-0",
-          isSidebarOpen ? "w-64" : "w-16"
+          "bg-white text-[#0F172A] border-r border-gray-100 transition-all duration-300 ease-in-out z-50 flex flex-col shrink-0 fixed inset-y-0 left-0 lg:relative",
+          isSidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:w-20 lg:translate-x-0"
         )}
       >
         {/* Sidebar Header */}
@@ -55,7 +70,7 @@ export default function Layout({ children, user }: LayoutProps) {
               alt="Logo Polda DIY"
               className="w-10 h-10 shrink-0 object-contain"
             />
-            {isSidebarOpen && (
+            {(isSidebarOpen || window.innerWidth < 1024) && (
               <div className="flex flex-col whitespace-nowrap">
                 <span className="text-sm font-black tracking-tight text-[#002147] uppercase leading-none">Polda DIY</span>
                 <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold mt-1">Bank Soal & SDM</span>
@@ -67,7 +82,7 @@ export default function Layout({ children, user }: LayoutProps) {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-8">
           <div>
-            {isSidebarOpen && <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-6 font-bold px-2">Main Management</p>}
+            {(isSidebarOpen || window.innerWidth < 1024) && <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-6 font-bold px-2">Main Management</p>}
             <ul className="space-y-3">
               {menuItems.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -85,7 +100,7 @@ export default function Layout({ children, user }: LayoutProps) {
                       )}
                     >
                       <Icon className={cn("w-4 h-4", isActive ? "text-blue-600" : "text-gray-400 group-hover:text-blue-600")} />
-                      {isSidebarOpen && <span className="font-bold text-xs tracking-wide">{item.name}</span>}
+                      {(isSidebarOpen || window.innerWidth < 1024) && <span className="font-bold text-xs tracking-wide">{item.name}</span>}
                     </Link>
                   </li>
                 );
@@ -100,7 +115,7 @@ export default function Layout({ children, user }: LayoutProps) {
             <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[10px] font-bold text-[#002147] shrink-0">
               {user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
             </div>
-            {isSidebarOpen && (
+            {(isSidebarOpen || window.innerWidth < 1024) && (
               <div className="overflow-hidden">
                 <p className="text-[11px] font-bold text-[#002147] truncate">{user.name}</p>
                 <p className="text-[9px] text-gray-500 truncate font-semibold capitalize">{user.role.toLowerCase()} Utama</p>
@@ -111,11 +126,11 @@ export default function Layout({ children, user }: LayoutProps) {
             onClick={handleLogout}
             className={cn(
               "flex items-center gap-3 w-full text-xs font-bold text-gray-400 hover:text-red-500 transition-all",
-              !isSidebarOpen && "justify-center"
+              !(isSidebarOpen || window.innerWidth < 1024) && "justify-center"
             )}
           >
             <LogOut className="w-4 h-4" />
-            {isSidebarOpen && <span>Keluar</span>}
+            {(isSidebarOpen || window.innerWidth < 1024) && <span>Keluar</span>}
           </button>
         </div>
       </aside>

@@ -141,7 +141,7 @@ export default function TakeQuiz() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-white rounded-[2.5rem] border border-gray-100 p-12 shadow-2xl shadow-blue-900/5"
+              className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 p-6 sm:p-12 shadow-2xl shadow-blue-900/5"
             >
               <div className="flex items-center gap-4 mb-8">
                 <button onClick={() => navigate(-1)} className="p-3 hover:bg-gray-50 rounded-2xl transition-colors">
@@ -150,7 +150,7 @@ export default function TakeQuiz() {
                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">Module Assessment</span>
               </div>
 
-              <h1 className="text-4xl font-black text-[#002147] mb-6 leading-tight">{questionData.title}</h1>
+              <h1 className="text-2xl sm:text-4xl font-black text-[#002147] mb-6 leading-tight">{questionData.title}</h1>
               <p className="text-gray-500 mb-10 text-lg leading-relaxed">{questionData.description}</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -210,8 +210,8 @@ export default function TakeQuiz() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] border border-gray-100 p-12 shadow-xl">
-                  <h3 className="text-2xl font-black text-[#002147] leading-tight mb-12">
+                <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 p-6 sm:p-12 shadow-xl">
+                  <h3 className="text-lg sm:text-2xl font-black text-[#002147] leading-tight mb-8 sm:mb-12">
                     {questionData.items[currentIndex].question}
                   </h3>
 
@@ -265,7 +265,7 @@ export default function TakeQuiz() {
 
               {/* Sidebar Navigation Grid */}
               <div className="w-full lg:w-80 shrink-0">
-                <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-xl sticky top-8">
+                <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 p-6 sm:p-8 shadow-xl lg:sticky lg:top-8">
                   <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6">Navigasi Soal</h4>
                   <div className="grid grid-cols-5 gap-3">
                     {questionData.items.map((_, idx) => (

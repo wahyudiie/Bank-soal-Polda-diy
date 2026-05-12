@@ -154,7 +154,7 @@ export default function Login() {
           <div className="absolute left-0 bottom-0 w-1/3 h-1/3 bg-blue-50/50 rounded-tr-full blur-[100px] -z-10" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center py-20 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -164,7 +164,7 @@ export default function Login() {
               <ShieldCheck className="w-6 h-6" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">Polda D.I. Yogyakarta</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] leading-tight mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-[#0F172A] leading-tight mb-8">
               Bank Soal <br />
               <span className="text-blue-600">Online Digital</span> <br />
               Polda DIY
@@ -190,7 +190,7 @@ export default function Login() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="w-full max-w-md mx-auto"
           >
-            <div className="bg-white p-10 rounded-3xl shadow-2xl shadow-blue-900/5 border border-gray-100">
+            <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-2xl shadow-blue-900/5 border border-gray-100">
               <div className="text-center mb-10">
                 <h3 className="text-lg font-black text-[#002147] tracking-tight mb-2">Portal Personel</h3>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Silahkan otentikasi identitas</p>
@@ -277,7 +277,7 @@ export default function Login() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="bg-white p-10 hover:-translate-y-2 transition-all rounded-3xl border border-gray-100 shadow-sm group"
+                className="bg-white p-6 sm:p-10 hover:-translate-y-2 transition-all rounded-3xl border border-gray-100 shadow-sm group"
               >
                 <div className="bg-blue-50 w-14 h-14 flex items-center justify-center mb-8 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
                   <adv.icon className="w-6 h-6" />
@@ -298,7 +298,7 @@ export default function Login() {
           <div className="inline-block bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
             <h2 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.4em]">Tentang Sistem</h2>
           </div>
-          <h3 className="text-5xl font-black text-[#002147] leading-tight">Pengembangan Karir Personel Polda DIY</h3>
+          <h3 className="text-3xl sm:text-5xl font-black text-[#002147] leading-tight">Pengembangan Karir Personel Polda DIY</h3>
           <p className="text-gray-600 text-lg leading-loose">
             Bank Soal Online Polda DIY merupakan sistem manajemen pengetahuan terpusat yang dirancang untuk memfasilitasi proses pengembangan karir dan peningkatan kompetensi personel Polri. Melalui sistem ini, personel dapat mengakses berbagai materi ujian dinas, tes pengetahuan kepolisian, dan materi pelatihan yang disusun untuk mendukung profesionalisme dalam bertugas.
           </p>

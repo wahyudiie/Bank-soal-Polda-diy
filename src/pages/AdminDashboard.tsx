@@ -187,26 +187,26 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                <th className="px-8 py-5 font-black">ID Ref</th>
-                <th className="px-6 py-5 font-black">Materi Soal</th>
-                <th className="px-6 py-5 font-black">Category</th>
-                <th className="px-8 py-5 font-black text-right">Actions</th>
+                <th className="px-4 sm:px-8 py-5 font-black">ID Ref</th>
+                <th className="px-4 sm:px-6 py-5 font-black">Materi Soal</th>
+                <th className="px-4 sm:px-6 py-5 font-black hidden md:table-cell">Category</th>
+                <th className="px-4 sm:px-8 py-5 font-black text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-[11px]">
               {questions.map((q: Question) => (
                 <tr key={q.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-8 py-5 font-mono text-blue-600 font-bold tracking-tighter">#REF-{q.id.toUpperCase().slice(0, 8)}</td>
-                  <td className="px-6 py-5">
-                    <p className="font-black text-[#002147] tracking-wide">{q.title}</p>
+                  <td className="px-4 sm:px-8 py-5 font-mono text-blue-600 font-bold tracking-tighter">#REF-{q.id.toUpperCase().slice(0, 8)}</td>
+                  <td className="px-4 sm:px-6 py-5">
+                    <p className="font-black text-[#002147] tracking-wide line-clamp-1">{q.title}</p>
                     <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">File: {q.fileName}</p>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 sm:px-6 py-5 hidden md:table-cell">
                     <span className="px-2 py-0.5 border border-gray-200 text-[9px] text-gray-500 font-black uppercase tracking-widest rounded">
                       {categories.find((c: any) => c.id === q.categoryId)?.name || 'GENERAL'}
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
+                  <td className="px-4 sm:px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
                     <div className="flex items-center justify-end gap-6 uppercase">
                       <button 
                         onClick={() => alert(`Membuka detail untuk materi: ${q.title}`)}
@@ -547,12 +547,12 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                <th className="px-8 py-5 font-black">Personel</th>
-                <th className="px-6 py-5 font-black">Modul Ujian</th>
-                <th className="px-6 py-5 font-black">Skor</th>
-                <th className="px-6 py-5 font-black">Status</th>
-                <th className="px-6 py-5 font-black">Waktu</th>
-                <th className="px-8 py-5 font-black text-right">Aksi</th>
+                <th className="px-4 sm:px-8 py-5 font-black">Personel</th>
+                <th className="px-4 sm:px-6 py-5 font-black hidden sm:table-cell">Modul Ujian</th>
+                <th className="px-4 sm:px-6 py-5 font-black">Skor</th>
+                <th className="px-4 sm:px-6 py-5 font-black hidden lg:table-cell">Status</th>
+                <th className="px-4 sm:px-6 py-5 font-black hidden md:table-cell">Waktu</th>
+                <th className="px-4 sm:px-8 py-5 font-black text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-[11px]">

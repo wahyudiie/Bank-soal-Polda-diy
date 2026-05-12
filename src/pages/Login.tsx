@@ -40,8 +40,17 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    
     try {
-      const user = await supabaseService.login(username);
+      // 1. Try Supabase first
+      let user = await supabaseService.login(username);
+      
+      // 2. If Supabase fails or not connected, use mock fallback
+      if (!user) {
+        user = mockService.login(username, password);
+      }
+
       if (user) {
         mockService.setCurrentUser(user);
         if (user.role === 'ADMIN') navigate('/admin');
@@ -50,7 +59,15 @@ export default function Login() {
         setError('ID PERSONEL TIDAK TERDAFTAR');
       }
     } catch (err) {
-      setError('GAGAL MENGHUBUNGKAN KE SERVER');
+      // 3. Last resort: try mock login even if error occurred
+      const user = mockService.login(username, password);
+      if (user) {
+        mockService.setCurrentUser(user);
+        if (user.role === 'ADMIN') navigate('/admin');
+        else navigate('/dashboard');
+      } else {
+        setError('GAGAL MENGHUBUNGKAN KE SERVER');
+      }
     }
   };
 

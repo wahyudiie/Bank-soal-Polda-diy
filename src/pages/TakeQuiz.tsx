@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockService } from '../services/mockService';
+import { supabaseService } from '../services/supabaseService';
 import { Question, QuizItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, XCircle, ArrowRight, Timer, ShieldCheck, ChevronLeft } from 'lucide-react';
@@ -22,27 +23,35 @@ export default function TakeQuiz() {
   const [timeLeft, setTimeLeft] = useState(3600);
   const [startTime, setStartTime] = useState<number>(0);
   const [resultSaved, setResultSaved] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const questions = mockService.getQuestions();
-    const found = questions.find(q => q.id === id);
-    if (found) {
-      if (!found.items || found.items.length < 5) {
-        const dummyItems: QuizItem[] = Array.from({ length: 50 }, (_, i) => ({
-          id: `${i + 1}`,
-          question: `Pertanyaan ke-${i + 1}: Apa tugas pokok Polri menurut UU No. 2 Tahun 2002?`,
-          options: [
-            'Memelihara Kamtibmas, Menegakkan Hukum, Memberikan Perlindungan',
-            'Menjaga Perbatasan dan Pertahanan Negara',
-            'Melakukan Operasi Militer Selain Perang',
-            'Menjaga Kedaulatan Wilayah Udara'
-          ],
-          correctAnswer: 0
-        }));
-        found.items = dummyItems;
+    const fetchData = async () => {
+      try {
+        const questions = await supabaseService.getQuestions();
+        const found = questions.find(q => q.id === id);
+        if (found) {
+          if (!found.items || found.items.length < 5) {
+            const dummyItems: QuizItem[] = Array.from({ length: 50 }, (_, i) => ({
+              id: `${i + 1}`,
+              question: `Pertanyaan ke-${i + 1}: Apa tugas pokok Polri menurut UU No. 2 Tahun 2002?`,
+              options: [
+                'Memelihara Kamtibmas, Menegakkan Hukum, Memberikan Perlindungan',
+                'Menjaga Perbatasan dan Pertahanan Negara',
+                'Melakukan Operasi Militer Selain Perang',
+                'Menjaga Kedaulatan Wilayah Udara'
+              ],
+              correctAnswer: 0
+            }));
+            found.items = dummyItems;
+          }
+          setQuestionData(found);
+        }
+      } catch (err) {
+        console.error('Error fetching question:', err);
       }
-      setQuestionData(found);
-    }
+    };
+    fetchData();
   }, [id]);
 
   useEffect(() => {
@@ -79,36 +88,45 @@ export default function TakeQuiz() {
     return Math.round((correct / questionData.items.length) * 100);
   };
 
-  const finishQuiz = () => {
-    if (!questionData || resultSaved) return;
-    const score = calculateScore();
-    const totalQ = questionData.items?.length || 0;
-    let correct = 0;
-    questionData.items?.forEach((item, idx) => {
-      if (answers[idx] === item.correctAnswer) correct++;
-    });
-    const timeTaken = Math.round((Date.now() - startTime) / 1000);
+  const finishQuiz = async () => {
+    if (!questionData || resultSaved || isSubmitting) return;
+    
+    try {
+      setIsSubmitting(true);
+      const score = calculateScore();
+      const totalQ = questionData.items?.length || 0;
+      let correct = 0;
+      questionData.items?.forEach((item, idx) => {
+        if (answers[idx] === item.correctAnswer) correct++;
+      });
+      const timeTaken = Math.round((Date.now() - startTime) / 1000);
 
-    mockService.saveResult({
-      userId: user.id,
-      userName: user.name,
-      userUsername: user.username,
-      questionId: questionData.id,
-      questionTitle: questionData.title,
-      score,
-      totalQuestions: totalQ,
-      correctAnswers: correct,
-      timeTaken,
-      status: score >= 70 ? 'LULUS' : 'TIDAK LULUS',
-    });
+      await supabaseService.saveResult({
+        userId: user.id,
+        userName: user.name,
+        userUsername: user.username,
+        questionId: questionData.id,
+        questionTitle: questionData.title,
+        score,
+        totalQuestions: totalQ,
+        correctAnswers: correct,
+        timeTaken,
+        status: score >= 70 ? 'LULUS' : 'TIDAK LULUS',
+      });
 
-    setResultSaved(true);
-    setCurrentStep('result');
+      setResultSaved(true);
+      setCurrentStep('result');
 
-    if (score >= 70) {
-      success('Ujian Selesai!', `Selamat! Anda LULUS dengan skor ${score}. Data telah dikirim ke Admin.`);
-    } else {
-      error('Ujian Selesai', `Skor Anda ${score}. Belum memenuhi syarat. Data telah dikirim ke Admin.`);
+      if (score >= 70) {
+        success('Ujian Selesai!', `Selamat! Anda LULUS dengan skor ${score}. Data telah disinkronkan ke pusat.`);
+      } else {
+        error('Ujian Selesai', `Skor Anda ${score}. Belum memenuhi syarat. Data tetap dikirim ke pusat.`);
+      }
+    } catch (err) {
+      console.error('Error saving result:', err);
+      alert('Gagal mengirim hasil ke server. Silakan hubungi admin.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

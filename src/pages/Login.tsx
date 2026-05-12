@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { mockService } from '../services/mockService';
 import { cn } from '../lib/utils';
+import { supabaseService } from '../services/supabaseService';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -37,14 +38,19 @@ export default function Login() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = mockService.login(username);
-    if (user) {
-      if (user.role === 'ADMIN') navigate('/admin');
-      else navigate('/dashboard');
-    } else {
-      setError('ID PERSONEL TIDAK TERDAFTAR');
+    try {
+      const user = await supabaseService.login(username);
+      if (user) {
+        mockService.setCurrentUser(user);
+        if (user.role === 'ADMIN') navigate('/admin');
+        else navigate('/dashboard');
+      } else {
+        setError('ID PERSONEL TIDAK TERDAFTAR');
+      }
+    } catch (err) {
+      setError('GAGAL MENGHUBUNGKAN KE SERVER');
     }
   };
 

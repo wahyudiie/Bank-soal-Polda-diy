@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockService } from '../services/mockService';
+import { supabaseService } from '../services/supabaseService';
 import { Question, QuestionCategory } from '../types';
 import { Search, Filter, Download, FileText, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -14,10 +14,25 @@ export default function Dashboard() {
   const [categories, setCategories] = useState<QuestionCategory[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setQuestions(mockService.getQuestions());
-    setCategories(mockService.getCategories());
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [qData, cData] = await Promise.all([
+          supabaseService.getQuestions(),
+          supabaseService.getCategories()
+        ]);
+        setQuestions(qData);
+        setCategories(cData);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   const filteredQuestions = questions.filter(q => {

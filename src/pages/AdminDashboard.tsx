@@ -386,6 +386,9 @@ const ManageUsers = ({ users }: { users: User[] }) => (
   </div>
 );
 
+import { supabaseService } from '../services/supabaseService';
+import { Question, User, QuestionCategory, QuizResult } from '../types';
+...
 export default function AdminDashboard() {
   const user = mockService.getCurrentUser()!;
   const location = useLocation();
@@ -393,6 +396,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [categories, setCategories] = useState<QuestionCategory[]>([]);
   const [results, setResults] = useState<QuizResult[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [prevResultCount, setPrevResultCount] = useState(0);
   const { toasts, removeToast, notification } = useNotification();
 
@@ -402,46 +406,74 @@ export default function AdminDashboard() {
 
   // Poll for new results every 10 seconds to simulate real-time notifications
   useEffect(() => {
-    const interval = setInterval(() => {
-      const latest = mockService.getResults();
-      if (latest.length > prevResultCount && prevResultCount > 0) {
-        const newest = latest[latest.length - 1];
-        notification(
-          `Ujian Baru Selesai!`,
-          `${newest.userName} telah menyelesaikan ujian "${newest.questionTitle}" dengan skor ${newest.score}.`
-        );
+    const interval = setInterval(async () => {
+      try {
+        const latest = await supabaseService.getResults();
+        if (latest.length > prevResultCount && prevResultCount > 0) {
+          const newest = latest[0]; // results are ordered by completed_at desc
+          notification(
+            `Ujian Baru Selesai!`,
+            `${newest.userName} telah menyelesaikan ujian "${newest.questionTitle}" dengan skor ${newest.score}.`
+          );
+        }
+        setPrevResultCount(latest.length);
+        setResults(latest);
+      } catch (err) {
+        console.error('Polling error:', err);
       }
-      setPrevResultCount(latest.length);
-      setResults(latest);
     }, 10000);
     return () => clearInterval(interval);
   }, [prevResultCount]);
 
-  const refreshData = () => {
-    setQuestions(mockService.getQuestions());
-    setUsers(mockService.getAllUsers());
-    setCategories(mockService.getCategories());
-    const r = mockService.getResults();
-    setResults(r);
-    setPrevResultCount(r.length);
-  };
-
-  const handleDeleteQuestion = (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus soal ini?')) {
-      mockService.deleteQuestion(id);
-      refreshData();
+  const refreshData = async () => {
+    try {
+      setIsLoading(true);
+      const [qData, uData, cData, rData] = await Promise.all([
+        supabaseService.getQuestions(),
+        supabaseService.getUsers(),
+        supabaseService.getCategories(),
+        supabaseService.getResults()
+      ]);
+      setQuestions(qData);
+      setUsers(uData);
+      setCategories(cData);
+      setResults(rData);
+      setPrevResultCount(rData.length);
+    } catch (err) {
+      console.error('Error refreshing data:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleUploadQuestion = (data: any) => {
-    mockService.addQuestion(data);
-    refreshData();
+  const handleDeleteQuestion = async (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus soal ini?')) {
+      try {
+        await supabaseService.deleteQuestion(id);
+        refreshData();
+      } catch (err) {
+        alert('Gagal menghapus soal.');
+      }
+    }
   };
 
-  const handleDeleteResult = (id: string) => {
-    if (confirm('Hapus data hasil ujian ini?')) {
-      mockService.deleteResult(id);
+  const handleUploadQuestion = async (data: any) => {
+    try {
+      await supabaseService.addQuestion(data);
       refreshData();
+    } catch (err) {
+      alert('Gagal mengunggah soal.');
+    }
+  };
+
+  const handleDeleteResult = async (id: string) => {
+    if (confirm('Hapus data hasil ujian ini?')) {
+      try {
+        await supabaseService.deleteResult(id);
+        refreshData();
+      } catch (err) {
+        alert('Gagal menghapus hasil ujian.');
+      }
     }
   };
 

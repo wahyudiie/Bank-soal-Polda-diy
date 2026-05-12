@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockService } from '../services/mockService';
+import { supabaseService } from '../services/supabaseService';
 import { Question, User, QuestionCategory, QuizResult } from '../types';
 import { 
   Plus, 
@@ -385,9 +386,6 @@ const ManageUsers = ({ users }: { users: User[] }) => (
     </div>
   </div>
 );
-
-import { supabaseService } from '../services/supabaseService';
-import { Question, User, QuestionCategory, QuizResult } from '../types';
 
 export default function AdminDashboard() {
   const user = mockService.getCurrentUser()!;

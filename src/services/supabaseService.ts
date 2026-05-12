@@ -2,8 +2,12 @@ import { supabase } from '../lib/supabase';
 import { Question, QuestionCategory, QuizResult, User } from '../types';
 
 export const supabaseService = {
+  // Helper to check if DB is connected
+  isConnected: () => !!supabase,
+
   // Categories
   getCategories: async (): Promise<QuestionCategory[]> => {
+    if (!supabase) return [];
     const { data, error } = await supabase
       .from('categories')
       .select('*')
@@ -14,6 +18,7 @@ export const supabaseService = {
 
   // Questions
   getQuestions: async (): Promise<Question[]> => {
+    if (!supabase) return [];
     const { data, error } = await supabase
       .from('questions')
       .select('*')
@@ -23,6 +28,7 @@ export const supabaseService = {
   },
 
   addQuestion: async (question: Partial<Question>): Promise<void> => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('questions')
       .insert([question]);
@@ -30,6 +36,7 @@ export const supabaseService = {
   },
 
   deleteQuestion: async (id: string): Promise<void> => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('questions')
       .delete()
@@ -39,6 +46,7 @@ export const supabaseService = {
 
   // Results
   getResults: async (): Promise<QuizResult[]> => {
+    if (!supabase) return [];
     const { data, error } = await supabase
       .from('quiz_results')
       .select('*')
@@ -48,6 +56,7 @@ export const supabaseService = {
   },
 
   saveResult: async (result: Partial<QuizResult>): Promise<void> => {
+    if (!supabase) return;
     const { error } = await supabase
       .from('quiz_results')
       .insert([result]);
@@ -73,6 +82,7 @@ export const supabaseService = {
   },
 
   login: async (username: string): Promise<User | null> => {
+    if (!supabase) return null;
     const { data, error } = await supabase
       .from('users')
       .select('*')

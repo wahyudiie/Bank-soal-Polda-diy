@@ -41,14 +41,19 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    const inputUsername = username.toLowerCase().trim();
     
     try {
-      // 1. Try Supabase first
-      let user = await supabaseService.login(username);
+      // 1. Try Supabase first if available
+      let user = null;
+      if (supabaseService.isConnected()) {
+        user = await supabaseService.login(inputUsername);
+      }
       
-      // 2. If Supabase fails or not connected, use mock fallback
+      // 2. Fallback to mock if no user found in Supabase
       if (!user) {
-        user = mockService.login(username, password);
+        const users = mockService.getAllUsers();
+        user = users.find(u => u.username.toLowerCase() === inputUsername) || null;
       }
 
       if (user) {
@@ -59,8 +64,11 @@ export default function Login() {
         setError('ID PERSONEL TIDAK TERDAFTAR');
       }
     } catch (err) {
-      // 3. Last resort: try mock login even if error occurred
-      const user = mockService.login(username, password);
+      console.error('Login error:', err);
+      // Last resort fallback
+      const users = mockService.getAllUsers();
+      const user = users.find(u => u.username.toLowerCase() === inputUsername);
+      
       if (user) {
         mockService.setCurrentUser(user);
         if (user.role === 'ADMIN') navigate('/admin');

@@ -100,8 +100,8 @@ export default function Login() {
       {/* Navbar */}
       <nav className={cn(
         "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-        isScrolled 
-          ? "bg-white/95 backdrop-blur-md py-3 shadow-md border-b border-gray-100" 
+        (isScrolled || window.innerWidth < 768)
+          ? "bg-white py-3 shadow-md border-b border-gray-100" 
           : "bg-transparent py-6 border-transparent"
       )}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -109,7 +109,7 @@ export default function Login() {
             <img 
               src="/logo-polda.jpeg" 
               alt="Logo Polda DIY" 
-              className="w-10 sm:w-12 h-auto"
+              className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
             />
             <div className="hidden sm:flex flex-col">
               <span className="text-sm font-black text-[#002147] uppercase leading-none">Bank Soal Online</span>
@@ -142,7 +142,7 @@ export default function Login() {
       </nav>
 
       {/* Hero / Login Section */}
-      <section id="home" className="relative h-screen flex items-center overflow-hidden bg-white">
+      <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-white pt-20 lg:pt-0">
         <div className="absolute inset-0 z-0">
           <div 
             className="absolute right-0 top-0 w-1/2 h-full hidden lg:block"

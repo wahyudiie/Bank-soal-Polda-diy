@@ -138,7 +138,7 @@ export default function Layout({ children, user }: LayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden text-[#0F172A]">
         {/* Header */}
-        <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0 z-20">
+        <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-10 shrink-0 z-20">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}

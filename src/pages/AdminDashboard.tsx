@@ -594,6 +594,7 @@ export default function AdminDashboard() {
             notification(
               `Ujian Baru Selesai!`,
               `${newest.userName || 'Seseorang'} telah menyelesaikan ujian "${newest.questionTitle || 'Materi'}" dengan skor ${newest.score || 0}.`
+{/* ... */}
             );
           }
         }
@@ -679,10 +680,10 @@ export default function AdminDashboard() {
         notification('Mengirim Email...', `Sedang mengirimkan detail akun ke ${data.email}`);
         try {
           await emailService.sendCredentialsEmail(data.email, data.name, data.username, data.password);
-          notification('Email Terkirim!', `Detail akun berhasil dikirim ke ${data.email}`);
-        } catch (emailErr) {
+          success('Email Terkirim!', `Detail akun berhasil dikirim ke ${data.email}`);
+        } catch (emailErr: any) {
           console.error('Email failed:', emailErr);
-          notification('Email Gagal', `Data tersimpan, tapi gagal mengirim email ke ${data.email}`, 'error');
+          error('Email Gagal', `Pesan: ${emailErr.message || 'Cek konfigurasi EmailJS'}`);
         }
       }
     } catch (err: any) {

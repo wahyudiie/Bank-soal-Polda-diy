@@ -38,9 +38,10 @@ export const emailService = {
 
       console.log('Email sent successfully!', response.status, response.text);
       return response;
-    } catch (err) {
-      console.error('Failed to send email:', err);
-      throw err;
+    } catch (err: any) {
+      const errorMsg = err?.text || err?.message || 'Unknown email error';
+      console.error('Failed to send email:', errorMsg);
+      throw new Error(errorMsg);
     }
   }
 };

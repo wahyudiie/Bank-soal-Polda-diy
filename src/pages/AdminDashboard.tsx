@@ -577,7 +577,7 @@ export default function AdminDashboard() {
   const [results, setResults] = useState<QuizResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [prevResultCount, setPrevResultCount] = useState(0);
-  const { toasts, removeToast, notification } = useNotification();
+  const { toasts, removeToast, success, error, notification } = useNotification();
 
   useEffect(() => {
     refreshData();
@@ -594,7 +594,6 @@ export default function AdminDashboard() {
             notification(
               `Ujian Baru Selesai!`,
               `${newest.userName || 'Seseorang'} telah menyelesaikan ujian "${newest.questionTitle || 'Materi'}" dengan skor ${newest.score || 0}.`
-{/* ... */}
             );
           }
         }

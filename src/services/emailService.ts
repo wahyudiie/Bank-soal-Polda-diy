@@ -13,14 +13,16 @@ export const emailService = {
    * @param password The assigned password
    */
   sendCredentialsEmail: async (toEmail: string, name: string, username: string, password?: string) => {
-    // If keys are not configured, log a warning and skip (so app doesn't crash)
+    // If keys are not configured, log a warning and skip
     if (SERVICE_ID === 'service_id_here' || TEMPLATE_ID === 'template_id_here' || PUBLIC_KEY === 'public_key_here') {
       console.warn('EmailJS keys not configured. Email will not be sent.');
-      console.log('Would have sent email to:', toEmail, 'with credentials:', { username, password });
       return;
     }
 
     try {
+      // Initialize with public key
+      emailjs.init(PUBLIC_KEY);
+      
       const templateParams = {
         to_email: toEmail,
         to_name: name,

@@ -154,6 +154,11 @@ export default function Login() {
               alt="Logo Polda DIY"
               className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
             />
+            <img
+              src="/logo-tik.jpeg"
+              alt="Logo Bid TIK"
+              className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
+            />
             <div className="flex flex-col">
               <span className="text-[10px] sm:text-sm font-black text-[#002147] uppercase leading-none">Bank Soal Online</span>
               <span className="text-[7px] sm:text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Polda D.I. Yogyakarta</span>

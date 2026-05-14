@@ -70,6 +70,11 @@ export default function Layout({ children, user }: LayoutProps) {
               alt="Logo Polda DIY"
               className="w-10 h-10 shrink-0 object-contain"
             />
+            <img
+              src="/logo-tik.jpeg"
+              alt="Logo Bid TIK"
+              className="w-10 h-10 shrink-0 object-contain"
+            />
             {(isSidebarOpen || window.innerWidth < 1024) && (
               <div className="flex flex-col whitespace-nowrap">
                 <span className="text-sm font-black tracking-tight text-[#002147] uppercase leading-none">Polda DIY</span>

@@ -41,6 +41,10 @@ export const mockService = {
     return user ? JSON.parse(user) : null;
   },
 
+  setCurrentUser: (user: User) => {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  },
+
   // Questions
   getQuestions: (): Question[] => {
     return JSON.parse(localStorage.getItem(QUESTIONS_KEY) || '[]');

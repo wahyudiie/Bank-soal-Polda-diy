@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Shield, 
-  User, 
-  Lock, 
-  ArrowRight, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Zap, 
+import {
+  Shield,
+  User,
+  Lock,
+  ArrowRight,
+  CheckCircle2,
+  ShieldCheck,
+  Zap,
   Database,
   MapPin,
   Mail,
@@ -42,7 +42,7 @@ export default function Login() {
     e.preventDefault();
     setError('');
     const inputUsername = username.toLowerCase().trim();
-    
+
     // EMERGENCY HARDCODED LOGIN (TO ENSURE ACCESS)
     if (inputUsername === 'admin') {
       const adminUser: any = { id: 'admin-1', username: 'admin', name: 'Administrator Polda', role: 'ADMIN', email: 'admin@poldadiy.go.id' };
@@ -50,7 +50,7 @@ export default function Login() {
       navigate('/admin');
       return;
     }
-    
+
     if (inputUsername === 'user') {
       const testUser: any = { id: 'user-1', username: 'user', name: 'Peserta Ujian', role: 'USER', email: 'peserta@gmail.com' };
       mockService.setCurrentUser(testUser);
@@ -62,9 +62,16 @@ export default function Login() {
       // 1. Try Supabase
       let user = null;
       if (supabaseService.isConnected()) {
-        user = await supabaseService.login(inputUsername);
+        try {
+          user = await supabaseService.login(inputUsername, password);
+        } catch (supaErr) {
+          console.error('Supabase login error:', supaErr);
+          // Don't throw, fall back to mock
+        }
+      } else {
+        console.warn('Supabase not connected, using mock data only');
       }
-      
+
       // 2. Try Mock
       if (!user) {
         const users = mockService.getAllUsers();
@@ -79,6 +86,7 @@ export default function Login() {
         setError('ID PERSONEL TIDAK TERDAFTAR');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('SISTEM SEDANG MAINTENANCE. SILAKAN COBA LAGI.');
     }
   };
@@ -136,14 +144,14 @@ export default function Login() {
       <nav className={cn(
         "fixed top-0 left-0 w-full z-50 transition-all duration-300",
         (isScrolled || window.innerWidth < 768)
-          ? "bg-white py-3 shadow-md border-b border-gray-100" 
+          ? "bg-white py-3 shadow-md border-b border-gray-100"
           : "bg-transparent py-6 border-transparent"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-4 cursor-pointer" onClick={() => scrollToSection('home')}>
-            <img 
-              src="/logo-polda.jpeg" 
-              alt="Logo Polda DIY" 
+            <img
+              src="/logo-polda.jpeg"
+              alt="Logo Polda DIY"
               className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
             />
             <div className="flex flex-col">
@@ -167,7 +175,7 @@ export default function Login() {
             </ul>
           </nav>
 
-          <button 
+          <button
             onClick={() => scrollToSection('login-form')}
             className="bg-[#002147] text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-[#003366] transition-all shadow-lg shadow-blue-900/10"
           >
@@ -179,7 +187,7 @@ export default function Login() {
       {/* Hero / Login Section */}
       <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-white pt-20 lg:pt-0">
         <div className="absolute inset-0 z-0">
-          <div 
+          <div
             className="absolute right-0 top-0 w-1/2 h-full hidden lg:block"
             style={{
               backgroundImage: `url('https://poldadiy.go.id/wp-content/uploads/2022/03/GEDUNG-MAPOLDA-DIY.jpg')`,
@@ -209,7 +217,7 @@ export default function Login() {
               Akses materi ujian dinas, pengembangan karir, dan peningkatan wawasan kepolisian bagi seluruh personel Polda D.I. Yogyakarta.
             </p>
             <div className="flex gap-4">
-              <button 
+              <button
                 onClick={() => scrollToSection('keunggulan')}
                 className="px-8 py-4 bg-gray-100 text-[#002147] font-black text-[11px] uppercase tracking-widest rounded-full hover:bg-gray-200 transition-all"
               >
@@ -350,7 +358,7 @@ export default function Login() {
       {/* Informasi */}
       <section id="informasi" className="py-32 px-6 bg-blue-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-           <Database className="w-[800px] h-[800px] absolute -right-40 -top-40" />
+          <Database className="w-[800px] h-[800px] absolute -right-40 -top-40" />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-xs font-bold text-blue-300 uppercase tracking-[0.5em] mb-12">Informasi Publik</h2>
@@ -364,13 +372,13 @@ export default function Login() {
       <section id="kontak" className="py-32 px-6 bg-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-1">
-             <h2 className="text-xs font-black text-blue-600 uppercase tracking-[0.4em] mb-6">Kontak Resmi</h2>
-             <h3 className="text-4xl font-black text-[#002147] mb-8">Hubungi Kami</h3>
-             <p className="text-gray-500 mb-10 leading-relaxed">
-               Layanan dukungan teknis dan informasi operasional Bidang TIK Polda D.I. Yogyakarta.
-             </p>
+            <h2 className="text-xs font-black text-blue-600 uppercase tracking-[0.4em] mb-6">Kontak Resmi</h2>
+            <h3 className="text-4xl font-black text-[#002147] mb-8">Hubungi Kami</h3>
+            <p className="text-gray-500 mb-10 leading-relaxed">
+              Layanan dukungan teknis dan informasi operasional Bidang TIK Polda D.I. Yogyakarta.
+            </p>
           </div>
-          
+
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
               <MapPin className="w-6 h-6 text-blue-600 mb-4" />
@@ -379,7 +387,7 @@ export default function Login() {
                 Jln. Padjadjaran (Ring Road Utara), Condongcatur, Depok, Sleman, Yogyakarta.
               </p>
             </div>
-            
+
             <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
               <Mail className="w-6 h-6 text-blue-600 mb-4" />
               <h4 className="text-sm font-bold text-[#002147] uppercase tracking-widest mb-4">Email Satker</h4>
@@ -400,9 +408,9 @@ export default function Login() {
             <div className="bg-[#002147] p-8 rounded-3xl text-white">
               <Globe className="w-6 h-6 text-blue-400 mb-4" />
               <h4 className="text-sm font-bold uppercase tracking-widest mb-4">Situs Resmi</h4>
-              <a 
-                href="https://jogja.polri.go.id/polda/satker/bid-tik" 
-                target="_blank" 
+              <a
+                href="https://jogja.polri.go.id/polda/satker/bid-tik"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium border-b border-blue-400 pb-1 hover:text-blue-300 transition-colors"
               >
@@ -417,19 +425,19 @@ export default function Login() {
       <footer className="py-12 border-t border-gray-100 bg-white">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4">
-             <img 
-               src="/logo-polda.jpeg" 
-               alt="Logo" 
-               className="w-10 opacity-70"
-             />
-             <img 
-               src="/logo-tik.jpeg" 
-               alt="Logo TIK" 
-               className="w-10 opacity-70"
-             />
-             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-               &copy; 2024 POLDA DIY Repository &bull; Bid TIK Official Application
-             </p>
+            <img
+              src="/logo-polda.jpeg"
+              alt="Logo"
+              className="w-10 opacity-70"
+            />
+            <img
+              src="/logo-tik.jpeg"
+              alt="Logo TIK"
+              className="w-10 opacity-70"
+            />
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              &copy; 2024 POLDA DIY Repository &bull; Bid TIK Official Application
+            </p>
           </div>
           <div className="flex gap-6">
             <Shield className="w-4 h-4 text-gray-200" />

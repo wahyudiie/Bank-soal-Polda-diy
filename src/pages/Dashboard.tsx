@@ -6,6 +6,7 @@ import { Question, QuestionCategory } from '../types';
 import { Search, Filter, Download, FileText, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
+import { mockService } from '../services/mockService';
 
 export default function Dashboard() {
   const navigate = useNavigate();

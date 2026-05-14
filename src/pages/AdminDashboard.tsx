@@ -319,73 +319,180 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
   );
 };
 
-const ManageUsers = ({ users }: { users: User[] }) => (
-  <div className="space-y-8">
-    <div className="flex justify-between items-center mb-8">
-      <div>
-        <h2 className="text-2xl font-black text-[#002147] tracking-tight">Manajemen Pengguna</h2>
-        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-2">Personal Accreditation System</p>
-      </div>
-      <button 
-        onClick={() => alert('Fitur Undang Personel memerlukan integrasi dengan basis data SDM.')}
-        className="bg-blue-50 hover:bg-blue-100 border border-blue-100 font-black text-blue-600 px-6 py-3 rounded-full flex items-center gap-2 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
-      >
-        <Plus className="w-4 h-4 text-blue-600" strokeWidth={3} />
-        <span>Undang Personel</span>
-      </button>
-    </div>
+const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (id: string) => void, onCreate: (data: any) => void }) => {
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    name: '',
+    role: 'USER' as UserRole,
+    email: ''
+  });
 
-    <div className="bg-white border border-gray-100 rounded-3xl shadow-sm flex flex-col overflow-hidden">
-      <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-        <h3 className="text-xs font-black uppercase tracking-[0.15em] text-[#002147]">Active Personnel Registry</h3>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onCreate(formData);
+    setFormData({ username: '', password: '', name: '', role: 'USER', email: '' });
+    setShowAddModal(false);
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h2 className="text-2xl font-black text-[#002147] tracking-tight">Manajemen Pengguna</h2>
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-2">Personal Accreditation System</p>
+        </div>
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-[#002147] text-white px-8 py-4 rounded-full font-black flex items-center gap-2 shadow-lg shadow-blue-900/10 hover:bg-blue-600 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
+        >
+          <Plus className="w-4 h-4" strokeWidth={3} />
+          <span>Tambah Personel</span>
+        </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
-              <th className="px-8 py-5 font-black">Personnel Data</th>
-              <th className="px-6 py-5 font-black">Access Authority</th>
-              <th className="px-6 py-5 font-black">Identity Code</th>
-              <th className="px-8 py-5 font-black text-right">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50 text-[11px]">
-            {users.map((u: User) => (
-              <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-[#002147] font-black text-xs uppercase tracking-tighter">
-                      {u.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+
+      <div className="bg-white border border-gray-100 rounded-3xl shadow-sm flex flex-col overflow-hidden">
+        <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <h3 className="text-xs font-black uppercase tracking-[0.15em] text-[#002147]">Active Personnel Registry</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
+                <th className="px-8 py-5 font-black">Personnel Data</th>
+                <th className="px-6 py-5 font-black">Access Authority</th>
+                <th className="px-6 py-5 font-black">Credentials</th>
+                <th className="px-8 py-5 font-black text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50 text-[11px]">
+              {users.map((u: User) => (
+                <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-[#002147] font-black text-xs uppercase tracking-tighter">
+                        {u.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </div>
+                      <div>
+                        <p className="font-black text-[#002147] tracking-wide">{u.name.toUpperCase()}</p>
+                        <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{u.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <span className={cn(
+                      "px-2 py-0.5 border text-[9px] font-black uppercase tracking-widest rounded",
+                      u.role === 'ADMIN' ? "border-red-100 text-red-500 bg-red-50" : "border-gray-100 text-gray-400 bg-gray-50/50"
+                    )}>
+                      {u.role} AUTHORITY
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <p className="font-mono text-[10px] font-black text-[#002147] tracking-tighter">USR: {u.username}</p>
+                    <p className="font-mono text-[9px] font-black text-gray-400 tracking-tighter mt-1">PWD: {u.password || '***'}</p>
+                  </td>
+                  <td className="px-8 py-5 text-right">
+                    <button 
+                      onClick={() => onDelete(u.id)}
+                      className="text-red-500 hover:text-red-600 font-black text-[9px] uppercase tracking-widest"
+                    >
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add User Modal */}
+      <AnimatePresence>
+        {showAddModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#002147]/20 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-lg rounded-3xl border border-gray-100 shadow-2xl overflow-hidden"
+            >
+              <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <h3 className="text-xs font-black text-[#002147] uppercase tracking-[0.3em]">Otentikasi Personel Baru</h3>
+                <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white rounded-full transition-colors font-bold text-gray-400">Tutup</button>
+              </div>
+              <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">NRP / Username</label>
+                    <input 
+                      required
+                      value={formData.username}
+                      onChange={e => setFormData({...formData, username: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                      placeholder="Input NRP..."
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Password</label>
+                    <input 
+                      required
+                      type="password"
+                      value={formData.password}
+                      onChange={e => setFormData({...formData, password: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                      placeholder="Input Password..."
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Nama Lengkap</label>
+                    <input 
+                      required
+                      value={formData.name}
+                      onChange={e => setFormData({...formData, name: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                      placeholder="Input Nama..."
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Email</label>
+                      <input 
+                        required
+                        type="email"
+                        value={formData.email}
+                        onChange={e => setFormData({...formData, email: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                        placeholder="Email..."
+                      />
                     </div>
                     <div>
-                      <p className="font-black text-[#002147] tracking-wide">{u.name.toUpperCase()}</p>
-                      <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{u.email}</p>
+                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Role</label>
+                      <select 
+                        value={formData.role}
+                        onChange={e => setFormData({...formData, role: e.target.value as UserRole})}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                      >
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                      </select>
                     </div>
                   </div>
-                </td>
-                <td className="px-6 py-5">
-                  <span className={cn(
-                    "px-2 py-0.5 border text-[9px] font-black uppercase tracking-widest rounded",
-                    u.role === 'ADMIN' ? "border-red-100 text-red-500 bg-red-50" : "border-gray-100 text-gray-400 bg-gray-50/50"
-                  )}>
-                    {u.role} AUTHORITY
-                  </span>
-                </td>
-                <td className="px-6 py-5 font-mono text-[10px] font-black text-gray-400 tracking-tighter">REF_{u.username.toUpperCase()}</td>
-                <td className="px-8 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2 text-emerald-500 font-black text-[9px] uppercase tracking-[0.2em]">
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                    VERIFIED
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full bg-[#002147] text-white font-black py-4 rounded-xl shadow-xl hover:bg-blue-600 transition-all text-[11px] uppercase tracking-[0.3em]"
+                >
+                  Daftarkan Personel
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
-  </div>
-);
+  );
+};
 
 export default function AdminDashboard() {
   const user = mockService.getCurrentUser()!;
@@ -475,6 +582,27 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus personel ini?')) {
+      try {
+        await supabaseService.deleteUser(id);
+        refreshData();
+      } catch (err) {
+        alert('Gagal menghapus personel.');
+      }
+    }
+  };
+
+  const handleCreateUser = async (data: any) => {
+    try {
+      await supabaseService.createUser(data);
+      refreshData();
+    } catch (err: any) {
+      console.error('Create user error:', err);
+      alert(`Gagal mendaftarkan personel: ${err.message || 'Error tidak diketahui'}`);
+    }
+  };
+
   return (
     <Layout user={user}>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -489,7 +617,7 @@ export default function AdminDashboard() {
           <Routes location={location}>
             <Route path="/" element={<AdminOverview questions={questions} users={users} results={results} />} />
             <Route path="/questions" element={<ManageQuestions questions={questions} categories={categories} onDelete={handleDeleteQuestion} onUpload={handleUploadQuestion} />} />
-            <Route path="/users" element={<ManageUsers users={users} />} />
+            <Route path="/users" element={<ManageUsers users={users} onDelete={handleDeleteUser} onCreate={handleCreateUser} />} />
             <Route path="/results" element={<ExamResults results={results} onDelete={handleDeleteResult} onRefresh={refreshData} />} />
           </Routes>
         </motion.div>

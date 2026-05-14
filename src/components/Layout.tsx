@@ -71,7 +71,7 @@ export default function Layout({ children, user }: LayoutProps) {
               className="w-10 h-10 shrink-0 object-contain"
             />
             <img
-              src="/logo-tik.png"
+              src="/logo-tik-transparent.png"
               alt="Logo Bid TIK"
               className="w-10 h-10 shrink-0 object-contain"
             />

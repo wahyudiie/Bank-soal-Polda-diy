@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { mockService } from '../services/mockService';
 import { supabaseService } from '../services/supabaseService';
 import { Question, User, QuestionCategory, QuizResult, UserRole } from '../types';
+import { emailService } from '../services/emailService';
 import { 
   Plus, 
   FileText, 
@@ -672,6 +673,18 @@ export default function AdminDashboard() {
     try {
       await supabaseService.createUser(data);
       refreshData();
+      
+      // Send notification email
+      if (data.email) {
+        notification('Mengirim Email...', `Sedang mengirimkan detail akun ke ${data.email}`);
+        try {
+          await emailService.sendCredentialsEmail(data.email, data.name, data.username, data.password);
+          notification('Email Terkirim!', `Detail akun berhasil dikirim ke ${data.email}`);
+        } catch (emailErr) {
+          console.error('Email failed:', emailErr);
+          notification('Email Gagal', `Data tersimpan, tapi gagal mengirim email ke ${data.email}`, 'error');
+        }
+      }
     } catch (err: any) {
       console.error('Create user error:', err);
       alert(`Gagal mendaftarkan personel: ${err.message || 'Error tidak diketahui'}`);

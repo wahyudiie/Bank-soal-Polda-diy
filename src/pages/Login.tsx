@@ -155,7 +155,7 @@ export default function Login() {
               className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
             />
             <img
-              src="/logo-tik.jpeg"
+              src="/logo-tik.png"
               alt="Logo Bid TIK"
               className="w-8 sm:w-12 h-8 sm:h-12 object-contain"
             />
@@ -436,7 +436,7 @@ export default function Login() {
               className="w-10 opacity-70"
             />
             <img
-              src="/logo-tik.jpeg"
+              src="/logo-tik.png"
               alt="Logo TIK"
               className="w-10 opacity-70"
             />

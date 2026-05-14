@@ -47,7 +47,7 @@ const AdminOverview = ({ questions = [], users = [], results = [] }: { questions
       <StatCard title="Ujian Selesai" value={results.length} icon={ClipboardList} />
       <StatCard
         title="Rata-rata Skor"
-        value={results.length > 0 ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0}
+        value={(results || []).length > 0 ? Math.round((results || []).reduce((a, r) => a + (r.score || 0), 0) / results.length) : 0}
         icon={Award}
       />
     </div>
@@ -412,8 +412,8 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                         {u.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </div>
                       <div>
-                        <p className="font-black text-[#002147] tracking-wide">{u.name.toUpperCase()}</p>
-                        <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{u.email}</p>
+                        <p className="font-black text-[#002147] tracking-wide">{(u.name || 'Unknown').toUpperCase()}</p>
+                        <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{u.email || '-'}</p>
                       </div>
                     </div>
                   </td>
@@ -587,15 +587,17 @@ export default function AdminDashboard() {
     const interval = setInterval(async () => {
       try {
         const latest = await supabaseService.getResults();
-        if (latest.length > prevResultCount && prevResultCount > 0) {
-          const newest = latest[0]; // results are ordered by completed_at desc
-          notification(
-            `Ujian Baru Selesai!`,
-            `${newest.userName} telah menyelesaikan ujian "${newest.questionTitle}" dengan skor ${newest.score}.`
-          );
+        if ((latest || []).length > prevResultCount && prevResultCount > 0) {
+          const newest = (latest || [])[0]; // results are ordered by completed_at desc
+          if (newest) {
+            notification(
+              `Ujian Baru Selesai!`,
+              `${newest.userName || 'Seseorang'} telah menyelesaikan ujian "${newest.questionTitle || 'Materi'}" dengan skor ${newest.score || 0}.`
+            );
+          }
         }
-        setPrevResultCount(latest.length);
-        setResults(latest);
+        setPrevResultCount((latest || []).length);
+        setResults(latest || []);
       } catch (err) {
         console.error('Polling error:', err);
       }
@@ -712,7 +714,7 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
     )
     .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
 
-  const avgScore = (results || []).length > 0 ? Math.round((results || []).reduce((a, r) => a + r.score, 0) / results.length) : 0;
+  const avgScore = (results || []).length > 0 ? Math.round((results || []).reduce((a, r) => a + (r.score || 0), 0) / (results || []).length) : 0;
   const lulusCount = (results || []).filter(r => r.status === 'LULUS').length;
 
   return (
@@ -731,11 +733,11 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">Total Ujian</p>
-          <p className="text-3xl font-black text-[#002147]">{results.length}</p>
+          <p className="text-3xl font-black text-[#002147]">{(results || []).length}</p>
         </div>
         <div className="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm">
           <p className="text-[10px] text-emerald-500 uppercase tracking-widest font-bold mb-1">Lulus</p>
-          <p className="text-3xl font-black text-emerald-600">{lulusCount} <span className="text-sm text-gray-400">/ {results.length}</span></p>
+          <p className="text-3xl font-black text-emerald-600">{lulusCount} <span className="text-sm text-gray-400">/ {(results || []).length}</span></p>
         </div>
         <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">Rata-rata Skor</p>
@@ -790,8 +792,8 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
               {filtered.map(r => (
                 <tr key={r.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-8 py-5">
-                    <p className="font-black text-[#002147] tracking-wide">{r.userName.toUpperCase()}</p>
-                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">@{r.userUsername}</p>
+                    <p className="font-black text-[#002147] tracking-wide">{(r.userName || 'Unknown').toUpperCase()}</p>
+                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">@{r.userUsername || 'user'}</p>
                   </td>
                   <td className="px-6 py-5">
                     <p className="font-bold text-[#002147]">{r.questionTitle}</p>

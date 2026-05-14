@@ -33,7 +33,18 @@ export const supabaseService = {
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) return mockService.getQuestions();
-      return data;
+      return data.map(q => ({
+        id: q.id,
+        title: q.title,
+        description: q.description,
+        categoryId: q.categoryid,
+        fileUrl: q.fileurl,
+        fileName: q.filename,
+        uploadedBy: q.uploadedby,
+        createdAt: q.created_at,
+        tags: q.tags,
+        items: q.items
+      }));
     } catch (err) {
       console.error(err);
       return mockService.getQuestions();
@@ -46,9 +57,21 @@ export const supabaseService = {
       return;
     }
     try {
+      const dbQuestion = {
+        id: question.id,
+        title: question.title,
+        description: question.description,
+        categoryid: question.categoryId,
+        fileurl: question.fileUrl,
+        filename: question.fileName,
+        uploadedby: question.uploadedBy,
+        created_at: question.createdAt || new Date().toISOString(),
+        tags: question.tags,
+        items: question.items
+      };
       const { error } = await supabase
         .from('questions')
-        .insert([question]);
+        .insert([dbQuestion]);
       if (error) throw error;
     } catch (err) {
       console.error(err);
@@ -84,7 +107,20 @@ export const supabaseService = {
         .order('completed_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) return mockService.getResults();
-      return data;
+      return data.map(r => ({
+        id: r.id,
+        userId: r.userid,
+        userName: r.username,
+        userUsername: r.userusername,
+        questionId: r.questionid,
+        questionTitle: r.questiontitle,
+        score: r.score,
+        totalQuestions: r.totalquestions,
+        correctAnswers: r.correctanswers,
+        completedAt: r.completed_at,
+        timeTaken: r.timetaken,
+        status: r.status
+      }));
     } catch (err) {
       console.error(err);
       return mockService.getResults();
@@ -97,9 +133,23 @@ export const supabaseService = {
       return;
     }
     try {
+      const dbResult = {
+        id: result.id,
+        userid: result.userId,
+        username: result.userName,
+        userusername: result.userUsername,
+        questionid: result.questionId,
+        questiontitle: result.questionTitle,
+        score: result.score,
+        totalquestions: result.totalQuestions,
+        correctanswers: result.correctAnswers,
+        completed_at: result.completedAt || new Date().toISOString(),
+        timetaken: result.timeTaken,
+        status: result.status
+      };
       const { error } = await supabase
         .from('quiz_results')
-        .insert([result]);
+        .insert([dbResult]);
       if (error) throw error;
     } catch (err) {
       console.error(err);

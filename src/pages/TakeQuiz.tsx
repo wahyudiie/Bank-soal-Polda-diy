@@ -209,10 +209,10 @@ export default function TakeQuiz() {
               className="flex flex-col lg:flex-row gap-8"
             >
               <div className="flex-1 space-y-8">
-                <div className="flex items-center justify-between bg-white px-8 py-4 rounded-full border border-gray-100 shadow-sm">
-                  <div className="flex items-center gap-6">
-                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Soal {currentIndex + 1} / {questionData.items.length}</div>
-                    <div className="w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="flex items-center justify-between bg-white px-4 sm:px-8 py-3 sm:py-4 rounded-full border border-gray-100 shadow-sm">
+                  <div className="flex items-center gap-3 sm:gap-6">
+                    <div className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">Soal {currentIndex + 1} / {questionData.items.length}</div>
+                    <div className="w-20 sm:w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden xs:block">
                       <div
                         className="h-full bg-blue-600 transition-all duration-500"
                         style={{ width: `${((currentIndex + 1) / questionData.items.length) * 100}%` }}
@@ -220,10 +220,10 @@ export default function TakeQuiz() {
                     </div>
                   </div>
                   <div className={cn(
-                    "flex items-center gap-2 font-mono font-black text-sm px-4 py-1 rounded-full border",
+                    "flex items-center gap-2 font-mono font-black text-xs sm:text-sm px-3 sm:px-4 py-1 rounded-full border shrink-0",
                     timeLeft < 300 ? "text-red-500 border-red-100 bg-red-50 animate-pulse" : "text-blue-600 border-blue-100 bg-blue-50"
                   )}>
-                    <Timer className="w-4 h-4" />
+                    <Timer className="w-3.5 h-3.5 sm:w-4 h-4" />
                     {formatTime(timeLeft)}
                   </div>
                 </div>
@@ -259,12 +259,12 @@ export default function TakeQuiz() {
                     ))}
                   </div>
 
-                  <div className="mt-12 flex justify-between gap-4">
+                  <div className="mt-12 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                     <button
                       onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
                       disabled={currentIndex === 0}
                       className={cn(
-                        "px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all",
+                        "px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-[9px] sm:text-[10px] uppercase tracking-widest transition-all",
                         currentIndex === 0 ? "bg-gray-50 text-gray-300" : "bg-gray-100 text-[#002147] hover:bg-gray-200"
                       )}
                     >
@@ -272,10 +272,10 @@ export default function TakeQuiz() {
                     </button>
                     <button
                       onClick={handleNext}
-                      className="px-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] flex items-center gap-3 transition-all bg-[#002147] text-white hover:bg-blue-600 shadow-xl shadow-blue-900/10 active:scale-95"
+                      className="px-6 sm:px-10 py-3 sm:py-4 rounded-2xl font-black text-[9px] sm:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.3em] flex items-center justify-center gap-3 transition-all bg-[#002147] text-white hover:bg-blue-600 shadow-xl shadow-blue-900/10 active:scale-95"
                     >
                       <span>{currentIndex === questionData.items.length - 1 ? 'Selesai & Kirim' : 'Lanjutkan'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 h-4" />
                     </button>
                   </div>
                 </div>

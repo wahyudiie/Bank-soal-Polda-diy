@@ -162,8 +162,8 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-black text-[#002147] tracking-tight">Manajemen Soal</h2>
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-2">Repository Registry System</p>
+          <h2 className="text-xl sm:text-2xl font-black text-[#002147] tracking-tight">Manajemen Soal</h2>
+          <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Repository Registry System</p>
         </div>
         <button 
           onClick={() => setShowUploadModal(true)}
@@ -184,30 +184,30 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                <th className="px-4 sm:px-8 py-5 font-black">ID Ref</th>
-                <th className="px-4 sm:px-6 py-5 font-black">Materi Soal</th>
-                <th className="px-4 sm:px-6 py-5 font-black hidden md:table-cell">Category</th>
-                <th className="px-4 sm:px-8 py-5 font-black text-right">Actions</th>
+                <th className="px-8 py-5 font-black">ID Ref</th>
+                <th className="px-6 py-5 font-black">Materi Soal</th>
+                <th className="px-6 py-5 font-black hidden md:table-cell">Category</th>
+                <th className="px-8 py-5 font-black text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-[11px]">
               {questions.map((q: Question) => (
                 <tr key={q.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-4 sm:px-8 py-5 font-mono text-blue-600 font-bold tracking-tighter">#REF-{q.id.toUpperCase().slice(0, 8)}</td>
-                  <td className="px-4 sm:px-6 py-5">
+                  <td className="px-8 py-5 font-mono text-blue-600 font-bold tracking-tighter">#REF-{q.id.toUpperCase().slice(0, 8)}</td>
+                  <td className="px-6 py-5">
                     <p className="font-black text-[#002147] tracking-wide line-clamp-1">{q.title}</p>
                     <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">File: {q.fileName}</p>
                   </td>
-                  <td className="px-4 sm:px-6 py-5 hidden md:table-cell">
+                  <td className="px-6 py-5 hidden md:table-cell">
                     <span className="px-2 py-0.5 border border-gray-200 text-[9px] text-gray-500 font-black uppercase tracking-widest rounded">
                       {categories.find((c: any) => c.id === q.categoryId)?.name || 'GENERAL'}
                     </span>
                   </td>
-                  <td className="px-4 sm:px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
+                  <td className="px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
                     <div className="flex items-center justify-end gap-6 uppercase">
                       <button 
                         onClick={() => alert(`Membuka detail untuk materi: ${q.title}`)}
@@ -230,6 +230,43 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
           {questions.length === 0 && (
             <div className="p-24 text-center">
               <FileText className="w-12 h-12 text-gray-100 mx-auto mb-6" />
+              <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.3em]">Registry Empty</p>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile View - Cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {questions.map((q: Question) => (
+            <div key={q.id} className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[9px] font-mono text-blue-600 font-bold tracking-tighter mb-1">#REF-{q.id.toUpperCase().slice(0, 8)}</p>
+                  <p className="font-black text-[#002147] text-sm leading-tight">{q.title}</p>
+                </div>
+                <span className="px-2 py-0.5 border border-gray-200 text-[8px] text-gray-500 font-black uppercase tracking-widest rounded shrink-0">
+                  {categories.find((c: any) => c.id === q.categoryId)?.name || 'GENERAL'}
+                </span>
+              </div>
+              <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest">File: {q.fileName}</p>
+              <div className="flex gap-4 pt-2">
+                <button 
+                  onClick={() => alert(`Membuka detail untuk materi: ${q.title}`)}
+                  className="flex-1 py-3 bg-gray-50 text-[#002147] text-[9px] font-black uppercase tracking-widest rounded-xl"
+                >
+                  Detail
+                </button>
+                <button 
+                  onClick={() => onDelete(q.id)}
+                  className="flex-1 py-3 bg-red-50 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-xl"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+          {questions.length === 0 && (
+            <div className="p-16 text-center">
               <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.3em]">Registry Empty</p>
             </div>
           )}
@@ -340,8 +377,8 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-black text-[#002147] tracking-tight">Manajemen Pengguna</h2>
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-2">Personal Accreditation System</p>
+          <h2 className="text-xl sm:text-2xl font-black text-[#002147] tracking-tight">Manajemen Pengguna</h2>
+          <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Personal Accreditation System</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
@@ -356,7 +393,7 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
         <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
           <h3 className="text-xs font-black uppercase tracking-[0.15em] text-[#002147]">Active Personnel Registry</h3>
         </div>
-        <div className="overflow-x-auto">
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
@@ -404,6 +441,42 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View - Cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {users.map((u: User) => (
+            <div key={u.id} className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-[#002147] font-black text-xs uppercase tracking-tighter shrink-0">
+                  {u.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-black text-[#002147] tracking-wide truncate uppercase text-sm">{u.name}</p>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 truncate">{u.email}</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                <div>
+                  <p className="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1">Credentials</p>
+                  <p className="font-mono text-[9px] font-black text-[#002147]">USR: {u.username}</p>
+                  <p className="font-mono text-[8px] font-black text-gray-400">PWD: {u.password || '***'}</p>
+                </div>
+                <span className={cn(
+                  "px-2 py-1 border text-[8px] font-black uppercase tracking-widest rounded h-fit",
+                  u.role === 'ADMIN' ? "border-red-100 text-red-500 bg-red-50" : "border-gray-100 text-gray-400 bg-gray-50/50"
+                )}>
+                  {u.role}
+                </span>
+              </div>
+              <button 
+                onClick={() => onDelete(u.id)}
+                className="w-full py-3 bg-red-50 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-xl"
+              >
+                Hapus Personel
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -646,8 +719,8 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-black text-[#002147] tracking-tight">Hasil Ujian Personel</h2>
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-2">Exam Results Management System</p>
+          <h2 className="text-xl sm:text-2xl font-black text-[#002147] tracking-tight">Hasil Ujian Personel</h2>
+          <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Exam Results Management System</p>
         </div>
         <button onClick={onRefresh} className="bg-blue-50 hover:bg-blue-100 border border-blue-100 font-black text-blue-600 px-6 py-3 rounded-full text-[11px] uppercase tracking-widest transition-all flex items-center gap-2">
           <Bell className="w-4 h-4" /> Refresh Data
@@ -701,16 +774,16 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                <th className="px-4 sm:px-8 py-5 font-black">Personel</th>
-                <th className="px-4 sm:px-6 py-5 font-black hidden sm:table-cell">Modul Ujian</th>
-                <th className="px-4 sm:px-6 py-5 font-black">Skor</th>
-                <th className="px-4 sm:px-6 py-5 font-black hidden lg:table-cell">Status</th>
-                <th className="px-4 sm:px-6 py-5 font-black hidden md:table-cell">Waktu</th>
-                <th className="px-4 sm:px-8 py-5 font-black text-right">Aksi</th>
+                <th className="px-8 py-5 font-black">Personel</th>
+                <th className="px-6 py-5 font-black hidden sm:table-cell">Modul Ujian</th>
+                <th className="px-6 py-5 font-black">Skor</th>
+                <th className="px-6 py-5 font-black hidden lg:table-cell">Status</th>
+                <th className="px-6 py-5 font-black hidden md:table-cell">Waktu</th>
+                <th className="px-8 py-5 font-black text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-[11px]">
@@ -755,12 +828,56 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
               ))}
             </tbody>
           </table>
-          {filtered.length === 0 && (
-            <div className="p-24 text-center">
-              <ClipboardList className="w-12 h-12 text-gray-100 mx-auto mb-6" />
-              <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.3em]">Belum ada data hasil ujian</p>
+        </div>
+
+        {/* Mobile View - Cards */}
+        <div className="sm:hidden divide-y divide-gray-50">
+          {filtered.map(r => (
+            <div key={r.id} className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-black text-[#002147] uppercase text-sm">{r.userName}</p>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">@{r.userUsername}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-lg font-black text-[#002147]">{r.score}</span>
+                  <span className="text-gray-300 text-[10px]">/100</span>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50/50 p-4 rounded-2xl space-y-3">
+                <div>
+                  <p className="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1">Modul Ujian</p>
+                  <p className="font-bold text-[#002147] text-xs">{r.questionTitle}</p>
+                </div>
+                <div className="flex justify-between items-end">
+                  <div className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
+                    {r.correctAnswers}/{r.totalQuestions} benar · {Math.floor(r.timeTaken / 60)}m {r.timeTaken % 60}s
+                  </div>
+                  <span className={cn(
+                    "px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border",
+                    r.status === 'LULUS'
+                      ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                      : "bg-red-50 text-red-600 border-red-100"
+                  )}>
+                    {r.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] text-gray-400 font-black uppercase tracking-widest">
+                  {new Date(r.completedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                </span>
+                <button
+                  onClick={() => onDelete(r.id)}
+                  className="text-red-400 hover:text-red-600 transition-colors text-[9px] font-black uppercase tracking-widest"
+                >
+                  Hapus Data
+                </button>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

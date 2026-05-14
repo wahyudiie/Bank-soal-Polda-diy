@@ -52,9 +52,9 @@ export default function Dashboard() {
       >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-xs font-black text-blue-600 uppercase tracking-[0.3em] mb-3">Repository Access</h1>
-            <h2 className="text-4xl font-black text-[#002147] tracking-tight">Katalog Bank Soal</h2>
-            <p className="text-gray-500 mt-3 font-semibold text-sm max-w-lg leading-relaxed">Akses repositori digital materi persiapan ujian kepolisian daerah daerah istimewa yogyakarta.</p>
+            <h1 className="text-[10px] sm:text-xs font-black text-blue-600 uppercase tracking-[0.3em] mb-2 sm:mb-3">Repository Access</h1>
+            <h2 className="text-2xl sm:text-4xl font-black text-[#002147] tracking-tight">Katalog Bank Soal</h2>
+            <p className="text-gray-500 mt-2 sm:mt-3 font-semibold text-[11px] sm:text-sm max-w-lg leading-relaxed">Akses repositori digital materi persiapan ujian kepolisian daerah daerah istimewa yogyakarta.</p>
           </div>
           <div className="flex bg-white p-1.5 rounded-full border border-gray-100 shadow-sm overflow-x-auto whitespace-nowrap no-scrollbar max-w-full">
             <button 

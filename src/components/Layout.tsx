@@ -182,7 +182,7 @@ export default function Layout({ children, user }: LayoutProps) {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-          <div className="p-10 max-w-7xl mx-auto">
+          <div className="p-4 sm:p-10 max-w-7xl mx-auto">
             {children}
           </div>
 

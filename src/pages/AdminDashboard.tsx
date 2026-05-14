@@ -3,7 +3,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockService } from '../services/mockService';
 import { supabaseService } from '../services/supabaseService';
-import { Question, User, QuestionCategory, QuizResult } from '../types';
+import { Question, User, QuestionCategory, QuizResult, UserRole } from '../types';
 import { 
   Plus, 
   FileText, 
@@ -38,7 +38,7 @@ const StatCard = ({ title, value, icon: Icon, color }: any) => (
   </div>
 );
 
-const AdminOverview = ({ questions, users, results }: { questions: Question[], users: User[], results: QuizResult[] }) => (
+const AdminOverview = ({ questions = [], users = [], results = [] }: { questions: Question[], users: User[], results: QuizResult[] }) => (
   <div className="space-y-12">
     {/* Stats */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -61,7 +61,7 @@ const AdminOverview = ({ questions, users, results }: { questions: Question[], u
         </Link>
       </div>
       <div className="divide-y divide-gray-50">
-        {results.slice(-5).reverse().map((r) => (
+        {(results || []).slice(-5).reverse().map((r) => (
           <div key={r.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
             <div className="flex items-center gap-4">
               <div className={cn("p-3 rounded-xl", r.status === 'LULUS' ? "bg-emerald-50" : "bg-red-50")}>
@@ -71,8 +71,8 @@ const AdminOverview = ({ questions, users, results }: { questions: Question[], u
                 }
               </div>
               <div>
-                <p className="text-xs font-bold text-[#002147]">{r.userName}</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">{r.questionTitle}</p>
+                <p className="text-xs font-bold text-[#002147]">{r.userName || 'Unknown User'}</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">{r.questionTitle || 'Materi'}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -83,12 +83,12 @@ const AdminOverview = ({ questions, users, results }: { questions: Question[], u
                 {r.score}/100 · {r.status}
               </span>
               <span className="text-[10px] font-black tracking-widest uppercase text-gray-400">
-                {new Date(r.completedAt).toLocaleDateString('id-ID')}
+                {r.completedAt ? new Date(r.completedAt).toLocaleDateString('id-ID') : '-'}
               </span>
             </div>
           </div>
         ))}
-        {results.length === 0 && (
+        {(!results || results.length === 0) && (
           <div className="p-16 text-center text-gray-300 font-black uppercase tracking-[0.2em] text-[10px] italic">Belum ada ujian diselesaikan</div>
         )}
       </div>
@@ -703,17 +703,17 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'LULUS' | 'TIDAK LULUS'>('ALL');
 
-  const filtered = results
+  const filtered = (results || [])
     .filter(r => filterStatus === 'ALL' || r.status === filterStatus)
     .filter(r =>
-      r.userName.toLowerCase().includes(search.toLowerCase()) ||
-      r.questionTitle.toLowerCase().includes(search.toLowerCase()) ||
-      r.userUsername.toLowerCase().includes(search.toLowerCase())
+      (r.userName?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (r.questionTitle?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (r.userUsername?.toLowerCase() || '').includes(search.toLowerCase())
     )
     .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
 
-  const avgScore = results.length > 0 ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0;
-  const lulusCount = results.filter(r => r.status === 'LULUS').length;
+  const avgScore = (results || []).length > 0 ? Math.round((results || []).reduce((a, r) => a + r.score, 0) / results.length) : 0;
+  const lulusCount = (results || []).filter(r => r.status === 'LULUS').length;
 
   return (
     <div className="space-y-8">

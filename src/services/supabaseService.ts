@@ -297,20 +297,46 @@ export const supabaseService = {
   },
 
   deleteUser: async (id: string): Promise<void> => {
-    try {
-      const users = mockService.getAllUsers();
-      localStorage.setItem('polda_diy_users', JSON.stringify(users.filter(u => u.id !== id)));
-    } catch (e) {}
-
-    if (!supabase) return;
+    if (!supabase) {
+      mockService.deleteUser(id);
+      return;
+    }
     try {
       const { error } = await supabase
         .from('users')
-        .delete()
+        .update({ is_deleted: true }) // Soft delete or actual delete
+        .eq('id', id);
+      
+      // If no soft delete column, use actual delete
+      if (error) {
+        const { error: delError } = await supabase
+          .from('users')
+          .delete()
+          .eq('id', id);
+        if (delError) throw delError;
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+
+  updateUser: async (id: string, updates: Partial<User>): Promise<void> => {
+    if (!supabase) {
+      const users = mockService.getAllUsers();
+      const updated = users.map(u => u.id === id ? { ...u, ...updates } : u);
+      localStorage.setItem('polda_diy_users', JSON.stringify(updated));
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update(updates)
         .eq('id', id);
       if (error) throw error;
     } catch (err) {
       console.error(err);
+      throw err;
     }
   }
 };

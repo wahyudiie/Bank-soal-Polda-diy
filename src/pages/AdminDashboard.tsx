@@ -469,13 +469,22 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
           <h2 className="text-xl sm:text-2xl font-black text-[#002147] tracking-tight">Manajemen Pengguna</h2>
           <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Personal Accreditation System</p>
         </div>
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="bg-[#002147] text-white px-8 py-4 rounded-full font-black flex items-center gap-2 shadow-lg shadow-blue-900/10 hover:bg-blue-600 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
-        >
-          <Plus className="w-4 h-4" strokeWidth={3} />
-          <span>Tambah Personel</span>
-        </button>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => (window as any).normalizeUsernames?.()}
+            className="hidden sm:flex bg-amber-50 text-amber-600 border border-amber-100 px-6 py-4 rounded-full font-black items-center gap-2 hover:bg-amber-100 transition-all text-[10px] uppercase tracking-widest"
+            title="Ubah semua username menjadi huruf kecil"
+          >
+            <span>Normalisasi Username</span>
+          </button>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="bg-[#002147] text-white px-8 py-4 rounded-full font-black flex items-center gap-2 shadow-lg shadow-blue-900/10 hover:bg-blue-600 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
+          >
+            <Plus className="w-4 h-4" strokeWidth={3} />
+            <span>Tambah Personel</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-gray-100 rounded-3xl shadow-sm flex flex-col overflow-hidden">
@@ -803,6 +812,35 @@ export default function AdminDashboard() {
       alert(`Gagal mendaftarkan personel: ${err.message || 'Error tidak diketahui'}`);
     }
   };
+
+  const handleNormalizeUsernames = async () => {
+    const usersToFix = users.filter(u => u.username !== u.username.toLowerCase());
+    if (usersToFix.length === 0) {
+      success('Selesai', 'Semua username sudah menggunakan huruf kecil.');
+      return;
+    }
+
+    if (confirm(`Terdapat ${usersToFix.length} user dengan huruf kapital. Ubah semua menjadi huruf kecil?`)) {
+      notification('Proses...', 'Sedang menormalisasi username...');
+      try {
+        let count = 0;
+        for (const u of usersToFix) {
+          await supabaseService.updateUser(u.id, { username: u.username.toLowerCase() });
+          count++;
+        }
+        await refreshData();
+        success('Berhasil', `${count} username telah diubah menjadi huruf kecil.`);
+      } catch (err) {
+        error('Gagal', 'Terjadi kesalahan saat menormalisasi data.');
+      }
+    }
+  };
+
+  // Expose to subcomponents via window for simplicity in this specific layout
+  useEffect(() => {
+    (window as any).normalizeUsernames = handleNormalizeUsernames;
+    return () => { delete (window as any).normalizeUsernames; };
+  }, [users]);
 
   return (
     <Layout user={user}>

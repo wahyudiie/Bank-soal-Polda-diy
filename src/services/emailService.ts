@@ -1,8 +1,11 @@
 import emailjs from '@emailjs/browser';
 
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_id_here';
-const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_id_here';
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_here';
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_3llqvnp';
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_f2h92te';
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YuQOL2eEylQT4n3Oh';
+
+// Initialize EmailJS once
+emailjs.init(PUBLIC_KEY);
 
 export const emailService = {
   /**
@@ -25,16 +28,16 @@ export const emailService = {
         template: TEMPLATE_ID,
         key: PUBLIC_KEY ? `${PUBLIC_KEY.slice(0, 4)}...${PUBLIC_KEY.slice(-4)}` : 'MISSING'
       });
-      // Initialize with public key
-      emailjs.init(PUBLIC_KEY);
       
       const templateParams = {
         to_email: toEmail,
+        toEmail: toEmail, // camelCase variation
         user_email: toEmail,
         email: toEmail,
         receiver_email: toEmail,
         recipient_email: toEmail,
         to_name: name,
+        toName: name, // camelCase variation
         user_name: name,
         name: name,
         receiver_name: name,

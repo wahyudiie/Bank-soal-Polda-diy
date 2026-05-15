@@ -91,6 +91,37 @@ export const supabaseService = {
     }
   },
 
+  updateQuestion: async (id: string, updates: Partial<Question>): Promise<void> => {
+    if (!supabase) {
+      const questions = mockService.getQuestions();
+      const updated = questions.map(q => q.id === id ? { ...q, ...updates } : q);
+      localStorage.setItem('polda_diy_questions', JSON.stringify(updated));
+      return;
+    }
+    try {
+      const dbUpdates = {
+        title: updates.title,
+        description: updates.description,
+        categoryid: updates.categoryId,
+        fileurl: updates.fileUrl,
+        filename: updates.fileName,
+        tags: updates.tags,
+        items: updates.items
+      };
+      // Remove undefined keys
+      Object.keys(dbUpdates).forEach(key => (dbUpdates as any)[key] === undefined && delete (dbUpdates as any)[key]);
+      
+      const { error } = await supabase
+        .from('questions')
+        .update(dbUpdates)
+        .eq('id', id);
+      if (error) throw error;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+
   deleteQuestion: async (id: string): Promise<void> => {
     if (!supabase) {
       mockService.deleteQuestion(id);

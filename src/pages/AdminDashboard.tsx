@@ -132,8 +132,9 @@ const AdminOverview = ({ questions = [], users = [], results = [] }: { questions
   </div>
 );
 
-const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => {
+const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }: any) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -141,7 +142,13 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
     file: null as File | null
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    description: '',
+    categoryId: ''
+  });
+
+  const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onUpload({
       title: formData.title,
@@ -157,6 +164,27 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
     });
     setFormData({ title: '', description: '', categoryId: categories[0]?.id || '', file: null });
     setShowUploadModal(false);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingQuestion) {
+      onUpdate(editingQuestion.id, {
+        title: editFormData.title,
+        description: editFormData.description,
+        categoryId: editFormData.categoryId
+      });
+      setEditingQuestion(null);
+    }
+  };
+
+  const startEditing = (q: Question) => {
+    setEditingQuestion(q);
+    setEditFormData({
+      title: q.title,
+      description: q.description || '',
+      categoryId: q.categoryId
+    });
   };
 
   return (
@@ -211,10 +239,10 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
                   <td className="px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
                     <div className="flex items-center justify-end gap-6 uppercase">
                       <button 
-                        onClick={() => alert(`Membuka detail untuk materi: ${q.title}`)}
+                        onClick={() => startEditing(q)}
                         className="hover:text-blue-600 transition-colors"
                       >
-                        Detail
+                        Edit
                       </button>
                       <button 
                         onClick={() => onDelete(q.id)}
@@ -252,10 +280,10 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
               <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest">File: {q.fileName}</p>
               <div className="flex gap-4 pt-2">
                 <button 
-                  onClick={() => alert(`Membuka detail untuk materi: ${q.title}`)}
+                  onClick={() => startEditing(q)}
                   className="flex-1 py-3 bg-gray-50 text-[#002147] text-[9px] font-black uppercase tracking-widest rounded-xl"
                 >
-                  Detail
+                  Edit
                 </button>
                 <button 
                   onClick={() => onDelete(q.id)}
@@ -288,7 +316,7 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
                 <h3 className="text-xs font-black text-[#002147] uppercase tracking-[0.3em]">New Resource Authorization</h3>
                 <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-white rounded-full transition-colors font-bold text-gray-400">Tutup</button>
               </div>
-              <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <form onSubmit={handleUploadSubmit} className="p-8 space-y-6">
                 <div className="space-y-5">
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Materi Title</label>
@@ -353,12 +381,72 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload }: any) => 
           </div>
         )}
       </AnimatePresence>
+
+      {/* Edit Question Modal */}
+      <AnimatePresence>
+        {editingQuestion && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#002147]/20 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-lg rounded-3xl border border-gray-100 shadow-2xl overflow-hidden"
+            >
+              <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <h3 className="text-xs font-black text-[#002147] uppercase tracking-[0.3em]">Update Materi Soal</h3>
+                <button onClick={() => setEditingQuestion(null)} className="p-2 hover:bg-white rounded-full transition-colors font-bold text-gray-400">Batal</button>
+              </div>
+              <form onSubmit={handleEditSubmit} className="p-8 space-y-6">
+                <div className="space-y-5">
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Materi Title</label>
+                    <input 
+                      required
+                      value={editFormData.title}
+                      onChange={e => setEditFormData({...editFormData, title: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase"
+                      placeholder="ENTER TITLE..."
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Category</label>
+                    <select 
+                      value={editFormData.categoryId}
+                      onChange={e => setEditFormData({...editFormData, categoryId: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase appearance-none"
+                    >
+                      {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-white">{c.name.toUpperCase()}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Detailed Specification</label>
+                    <textarea 
+                      required
+                      value={editFormData.description}
+                      onChange={e => setEditFormData({...editFormData, description: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] h-32 resize-none tracking-widest uppercase"
+                      placeholder="ENTER SPECIFICATION..."
+                    />
+                  </div>
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-blue-700 transition-all mt-4 text-[11px] uppercase tracking-[0.3em]"
+                >
+                  Simpan Perubahan
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (id: string) => void, onCreate: (data: any) => void }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -509,14 +597,23 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Password</label>
-                    <input 
-                      required
-                      type="password"
-                      value={formData.password}
-                      onChange={e => setFormData({...formData, password: e.target.value})}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
-                      placeholder="Input Password..."
-                    />
+                    <div className="relative">
+                      <input 
+                        required
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={e => setFormData({...formData, password: e.target.value})}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-600 font-bold text-xs"
+                        placeholder="Input Password..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Nama Lengkap</label>
@@ -642,8 +739,19 @@ export default function AdminDashboard() {
     try {
       await supabaseService.addQuestion(data);
       refreshData();
+      success('Berhasil', 'Materi soal berhasil diunggah.');
     } catch (err) {
-      alert('Gagal mengunggah soal.');
+      error('Gagal', 'Gagal mengunggah soal.');
+    }
+  };
+
+  const handleUpdateQuestion = async (id: string, updates: any) => {
+    try {
+      await supabaseService.updateQuestion(id, updates);
+      refreshData();
+      success('Berhasil', 'Materi soal berhasil diperbarui.');
+    } catch (err) {
+      error('Gagal', 'Gagal memperbarui soal.');
     }
   };
 
@@ -709,7 +817,7 @@ export default function AdminDashboard() {
         >
           <Routes location={location}>
             <Route path="/" element={<AdminOverview questions={questions} users={users} results={results} />} />
-            <Route path="/questions" element={<ManageQuestions questions={questions} categories={categories} onDelete={handleDeleteQuestion} onUpload={handleUploadQuestion} />} />
+            <Route path="/questions" element={<ManageQuestions questions={questions} categories={categories} onDelete={handleDeleteQuestion} onUpload={handleUploadQuestion} onUpdate={handleUpdateQuestion} />} />
             <Route path="/users" element={<ManageUsers users={users} onDelete={handleDeleteUser} onCreate={handleCreateUser} />} />
             <Route path="/results" element={<ExamResults results={results} onDelete={handleDeleteResult} onRefresh={refreshData} />} />
           </Routes>
@@ -809,9 +917,11 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
             <tbody className="divide-y divide-gray-50 text-[11px]">
               {filtered.map(r => (
                 <tr key={r.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-8 py-5">
-                    <p className="font-black text-[#002147] tracking-wide">{(r.userName || 'Unknown').toUpperCase()}</p>
-                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">@{r.userUsername || 'user'}</p>
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-[#002147] tracking-tight mb-1">{(r.userName || 'Unknown').toUpperCase()}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-black uppercase tracking-widest">NRP: {r.userUsername || 'user'}</span>
+                    </div>
                   </td>
                   <td className="px-6 py-5">
                     <p className="font-bold text-[#002147]">{r.questionTitle}</p>
@@ -820,8 +930,10 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
                     </p>
                   </td>
                   <td className="px-6 py-5">
-                    <span className="text-xl font-black text-[#002147]">{r.score}</span>
-                    <span className="text-gray-300 text-sm">/100</span>
+                    <div className="flex flex-col">
+                      <span className="text-2xl font-black text-[#002147] leading-none mb-1">{r.score}</span>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Poin / 100</span>
+                    </div>
                   </td>
                   <td className="px-6 py-5">
                     <span className={cn(

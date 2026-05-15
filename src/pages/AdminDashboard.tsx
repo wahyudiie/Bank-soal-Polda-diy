@@ -5,13 +5,13 @@ import { mockService } from '../services/mockService';
 import { supabaseService } from '../services/supabaseService';
 import { Question, User, QuestionCategory, QuizResult, UserRole } from '../types';
 import { emailService } from '../services/emailService';
-import { 
-  Plus, 
-  FileText, 
-  Users as UsersIcon, 
-  TrendingUp, 
-  Calendar, 
-  Trash2, 
+import {
+  Plus,
+  FileText,
+  Users as UsersIcon,
+  TrendingUp,
+  Clock,
+  Trash2,
   Eye,
   EyeOff,
   Upload,
@@ -120,7 +120,7 @@ const AdminOverview = ({ questions = [], users = [], results = [] }: { questions
               </div>
             </div>
             <div className="flex items-center gap-3 text-gray-400">
-              <Calendar className="w-3.5 h-3.5" />
+              <Clock className="w-3.5 h-3.5" />
               <span className="text-[10px] font-black tracking-widest uppercase">{new Date(q.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
@@ -195,7 +195,7 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
           <h2 className="text-xl sm:text-2xl font-black text-[#002147] tracking-tight">Manajemen Soal</h2>
           <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Repository Registry System</p>
         </div>
-        <button 
+        <button
           onClick={() => setShowUploadModal(true)}
           className="bg-[#002147] text-white px-8 py-4 rounded-full font-black flex items-center gap-2 shadow-lg shadow-blue-900/10 hover:bg-blue-600 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
         >
@@ -239,13 +239,13 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                   </td>
                   <td className="px-8 py-5 text-right font-black text-[#002147] tracking-widest text-[9px]">
                     <div className="flex items-center justify-end gap-6 uppercase">
-                      <button 
+                      <button
                         onClick={() => startEditing(q)}
                         className="hover:text-blue-600 transition-colors"
                       >
                         Edit
                       </button>
-                      <button 
+                      <button
                         onClick={() => onDelete(q.id)}
                         className="text-red-500 hover:text-red-600 transition-colors uppercase"
                       >
@@ -280,13 +280,13 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
               </div>
               <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest">File: {q.fileName}</p>
               <div className="flex gap-4 pt-2">
-                <button 
+                <button
                   onClick={() => startEditing(q)}
                   className="flex-1 py-3 bg-gray-50 text-[#002147] text-[9px] font-black uppercase tracking-widest rounded-xl"
                 >
                   Edit
                 </button>
-                <button 
+                <button
                   onClick={() => onDelete(q.id)}
                   className="flex-1 py-3 bg-red-50 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-xl"
                 >
@@ -307,7 +307,7 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
       <AnimatePresence>
         {showUploadModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#002147]/20 backdrop-blur-md">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -321,10 +321,10 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                 <div className="space-y-5">
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Materi Title</label>
-                    <input 
+                    <input
                       required
                       value={formData.title}
-                      onChange={e => setFormData({...formData, title: e.target.value})}
+                      onChange={e => setFormData({ ...formData, title: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase"
                       placeholder="ENTER TITLE..."
                     />
@@ -332,9 +332,9 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Category</label>
-                      <select 
+                      <select
                         value={formData.categoryId}
-                        onChange={e => setFormData({...formData, categoryId: e.target.value})}
+                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase appearance-none"
                       >
                         {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-white">{c.name.toUpperCase()}</option>)}
@@ -343,14 +343,14 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                     <div>
                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Upload Berkas Soal (PDF/DOC)</label>
                       <div className="relative">
-                        <input 
+                        <input
                           type="file"
                           required
-                          onChange={e => setFormData({...formData, file: e.target.files?.[0] || null})}
+                          onChange={e => setFormData({ ...formData, file: e.target.files?.[0] || null })}
                           className="hidden"
                           id="file-upload"
                         />
-                        <label 
+                        <label
                           htmlFor="file-upload"
                           className="w-full bg-gray-50 border border-dashed border-gray-200 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-[10px] text-blue-600 tracking-widest uppercase cursor-pointer flex items-center justify-center gap-2 hover:bg-blue-50"
                         >
@@ -362,16 +362,16 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Detailed Specification</label>
-                    <textarea 
+                    <textarea
                       required
                       value={formData.description}
-                      onChange={e => setFormData({...formData, description: e.target.value})}
+                      onChange={e => setFormData({ ...formData, description: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] h-32 resize-none tracking-widest uppercase"
                       placeholder="ENTER SPECIFICATION..."
                     />
                   </div>
                 </div>
-                <button 
+                <button
                   type="submit"
                   className="w-full bg-[#002147] text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-900/10 hover:bg-blue-600 active:scale-[0.99] transition-all mt-4 text-[11px] uppercase tracking-[0.3em]"
                 >
@@ -387,7 +387,7 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
       <AnimatePresence>
         {editingQuestion && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#002147]/20 backdrop-blur-md">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -401,19 +401,19 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                 <div className="space-y-5">
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Materi Title</label>
-                    <input 
+                    <input
                       required
                       value={editFormData.title}
-                      onChange={e => setEditFormData({...editFormData, title: e.target.value})}
+                      onChange={e => setEditFormData({ ...editFormData, title: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase"
                       placeholder="ENTER TITLE..."
                     />
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Category</label>
-                    <select 
+                    <select
                       value={editFormData.categoryId}
-                      onChange={e => setEditFormData({...editFormData, categoryId: e.target.value})}
+                      onChange={e => setEditFormData({ ...editFormData, categoryId: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] tracking-widest uppercase appearance-none"
                     >
                       {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-white">{c.name.toUpperCase()}</option>)}
@@ -421,16 +421,16 @@ const ManageQuestions = ({ questions, categories, onDelete, onUpload, onUpdate }
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 block">Detailed Specification</label>
-                    <textarea 
+                    <textarea
                       required
                       value={editFormData.description}
-                      onChange={e => setEditFormData({...editFormData, description: e.target.value})}
+                      onChange={e => setEditFormData({ ...editFormData, description: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-600 transition-all font-bold text-xs text-[#002147] h-32 resize-none tracking-widest uppercase"
                       placeholder="ENTER SPECIFICATION..."
                     />
                   </div>
                 </div>
-                <button 
+                <button
                   type="submit"
                   className="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-blue-700 transition-all mt-4 text-[11px] uppercase tracking-[0.3em]"
                 >
@@ -471,14 +471,14 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
           <p className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest font-bold mt-1 sm:mt-2">Personal Accreditation System</p>
         </div>
         <div className="flex gap-4">
-          <button 
+          <button
             onClick={() => (window as any).normalizeUsernames?.()}
             className="hidden sm:flex bg-amber-50 text-amber-600 border border-amber-100 px-6 py-4 rounded-full font-black items-center gap-2 hover:bg-amber-100 transition-all text-[10px] uppercase tracking-widest"
             title="Ubah semua username menjadi huruf kecil"
           >
             <span>Normalisasi Username</span>
           </button>
-          <button 
+          <button
             onClick={() => setShowAddModal(true)}
             className="bg-[#002147] text-white px-8 py-4 rounded-full font-black flex items-center gap-2 shadow-lg shadow-blue-900/10 hover:bg-blue-600 transition-all active:scale-95 text-[11px] uppercase tracking-widest"
           >
@@ -529,7 +529,7 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                     <p className="font-mono text-[9px] font-black text-gray-400 tracking-tighter mt-1">PWD: {u.password || '***'}</p>
                   </td>
                   <td className="px-8 py-5 text-right">
-                    <button 
+                    <button
                       onClick={() => onDelete(u.id)}
                       className="text-red-500 hover:text-red-600 font-black text-[9px] uppercase tracking-widest"
                     >
@@ -568,7 +568,7 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                   {u.role}
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => onDelete(u.id)}
                 className="w-full py-3 bg-red-50 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-xl"
               >
@@ -583,7 +583,7 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
       <AnimatePresence>
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#002147]/20 backdrop-blur-md">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -597,10 +597,10 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                 <div className="space-y-4">
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">NRP / Username</label>
-                    <input 
+                    <input
                       required
                       value={formData.username}
-                      onChange={e => setFormData({...formData, username: e.target.value})}
+                      onChange={e => setFormData({ ...formData, username: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
                       placeholder="Input NRP..."
                     />
@@ -608,11 +608,11 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Password</label>
                     <div className="relative">
-                      <input 
+                      <input
                         required
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
-                        onChange={e => setFormData({...formData, password: e.target.value})}
+                        onChange={e => setFormData({ ...formData, password: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-600 font-bold text-xs"
                         placeholder="Input Password..."
                       />
@@ -627,10 +627,10 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                   </div>
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Nama Lengkap</label>
-                    <input 
+                    <input
                       required
                       value={formData.name}
-                      onChange={e => setFormData({...formData, name: e.target.value})}
+                      onChange={e => setFormData({ ...formData, name: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
                       placeholder="Input Nama..."
                     />
@@ -638,20 +638,20 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Email</label>
-                      <input 
+                      <input
                         required
                         type="email"
                         value={formData.email}
-                        onChange={e => setFormData({...formData, email: e.target.value})}
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
                         placeholder="Email..."
                       />
                     </div>
                     <div>
                       <label className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Role</label>
-                      <select 
+                      <select
                         value={formData.role}
-                        onChange={e => setFormData({...formData, role: e.target.value as UserRole})}
+                        onChange={e => setFormData({ ...formData, role: e.target.value as UserRole })}
                         className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 font-bold text-xs"
                       >
                         <option value="USER">USER</option>
@@ -660,7 +660,7 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                     </div>
                   </div>
                 </div>
-                <button 
+                <button
                   type="submit"
                   className="w-full bg-[#002147] text-white font-black py-4 rounded-xl shadow-xl hover:bg-blue-600 transition-all text-[11px] uppercase tracking-[0.3em]"
                 >
@@ -805,7 +805,7 @@ export default function AdminDashboard() {
 
       await supabaseService.createUser(cleanData);
       refreshData();
-      
+
       // Global notification for history
       window.dispatchEvent(new CustomEvent('new-app-notification', {
         detail: {
@@ -1032,7 +1032,7 @@ function ExamResults({ results, onDelete, onRefresh }: { results: QuizResult[], 
                   <span className="text-gray-300 text-[10px]">/100</span>
                 </div>
               </div>
-              
+
               <div className="bg-gray-50/50 p-4 rounded-2xl space-y-3">
                 <div>
                   <p className="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1">Modul Ujian</p>

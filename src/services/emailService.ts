@@ -20,16 +20,30 @@ export const emailService = {
     }
 
     try {
+      console.log('Email Config Check:', {
+        service: SERVICE_ID,
+        template: TEMPLATE_ID,
+        key: PUBLIC_KEY ? `${PUBLIC_KEY.slice(0, 4)}...${PUBLIC_KEY.slice(-4)}` : 'MISSING'
+      });
       // Initialize with public key
       emailjs.init(PUBLIC_KEY);
       
       const templateParams = {
         to_email: toEmail,
+        user_email: toEmail,
+        email: toEmail,
         to_name: name,
+        user_name: name,
+        name: name,
         user_username: username,
+        username: username,
         user_password: password || 'Sudah diatur oleh Admin',
+        password: password || 'Sudah diatur oleh Admin',
         app_name: 'Bank Soal Polda DIY',
+        site_name: 'Bank Soal Polda DIY',
       };
+
+      console.log('Sending email with params:', templateParams);
 
       const response = await emailjs.send(
         SERVICE_ID,
@@ -38,11 +52,11 @@ export const emailService = {
         PUBLIC_KEY
       );
 
-      console.log('Email sent successfully!', response.status, response.text);
+      console.log('EmailJS Response:', response);
       return response;
     } catch (err: any) {
-      const errorMsg = err?.text || err?.message || 'Unknown email error';
-      console.error('Failed to send email:', errorMsg);
+      const errorMsg = err?.text || err?.message || JSON.stringify(err) || 'Unknown email error';
+      console.error('EmailJS Error Details:', err);
       throw new Error(errorMsg);
     }
   }

@@ -92,6 +92,11 @@ export const mockService = {
     localStorage.setItem(USERS_KEY, JSON.stringify(newUsers));
   },
 
+  deleteUser: (id: string) => {
+    const users = mockService.getAllUsers();
+    localStorage.setItem(USERS_KEY, JSON.stringify(users.filter(u => u.id !== id)));
+  },
+
   // Quiz Results
   saveResult: (result: Omit<QuizResult, 'id' | 'completedAt'>): QuizResult => {
     const results = mockService.getResults();

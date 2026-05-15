@@ -9,12 +9,16 @@ import {
   Menu,
   X,
   Bell,
-  ClipboardList
+  ClipboardList,
+  Wifi,
+  WifiOff,
+  Database,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { mockService } from '../services/mockService';
 import { supabaseService } from '../services/supabaseService';
-import { Database, Wifi, WifiOff } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,16 +33,17 @@ export default function Layout({ children, user }: LayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = (notifications || []).filter(n => n && !n.isRead).length;
 
   React.useEffect(() => {
     const handleNewNotif = (e: any) => {
+      if (!e.detail) return;
       const { title, message } = e.detail;
       setNotifications(prev => [
         {
           id: Math.random().toString(36).substr(2, 9),
-          title,
-          message,
+          title: title || 'Notifikasi',
+          message: message || '',
           time: new Date(),
           isRead: false
         },
@@ -74,6 +79,27 @@ export default function Layout({ children, user }: LayoutProps) {
     mockService.logout();
     navigate('/');
   };
+
+  if (!user) {
+    return <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">{children}</div>;
+  }
+
+  // Basic layout error recovery
+  const [hasLayoutError, setHasLayoutError] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleError = (e: ErrorEvent) => {
+      if (e.message.includes('Layout')) {
+        setHasLayoutError(true);
+      }
+    };
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasLayoutError) {
+    return <div className="p-10 text-center">Something went wrong with the layout. Please refresh.</div>;
+  }
 
   const menuItems = user.role === 'ADMIN' ? [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
@@ -157,12 +183,12 @@ export default function Layout({ children, user }: LayoutProps) {
         <div className="p-6 border-t border-gray-100 bg-gray-50/50 shrink-0">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[10px] font-bold text-[#002147] shrink-0">
-              {user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+              {(user?.name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
             </div>
             {(isSidebarOpen || window.innerWidth < 1024) && (
               <div className="overflow-hidden">
-                <p className="text-[11px] font-bold text-[#002147] truncate">{user.name}</p>
-                <p className="text-[9px] text-gray-500 truncate font-semibold capitalize">{user.role.toLowerCase()} Utama</p>
+                <p className="text-[11px] font-bold text-[#002147] truncate">{user?.name || 'User'}</p>
+                <p className="text-[9px] text-gray-500 truncate font-semibold capitalize">{(user?.role || 'USER').toLowerCase()} Utama</p>
               </div>
             )}
           </div>
@@ -241,12 +267,16 @@ export default function Layout({ children, user }: LayoutProps) {
                     {notifications.length > 0 ? (
                       <div className="divide-y divide-gray-50">
                         {notifications.map((n) => (
-                          <div key={n.id} className="p-4 hover:bg-gray-50 transition-colors cursor-default">
-                            <p className="text-[10px] font-black text-[#002147] uppercase tracking-wide mb-1">{n.title}</p>
-                            <p className="text-[10px] text-gray-500 leading-relaxed font-semibold">{n.message}</p>
+                          <div key={n?.id || Math.random().toString()} className="p-4 hover:bg-gray-50 transition-colors cursor-default">
+                            <p className="text-[10px] font-black text-[#002147] uppercase tracking-wide mb-1">{n?.title || 'Notifikasi'}</p>
+                            <p className="text-[10px] text-gray-500 leading-relaxed font-semibold">{n?.message || 'Detail tidak tersedia'}</p>
                             <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                              <Calendar className="w-3 h-3" />
-                              {new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              <Bell className="w-3 h-3" />
+                              {n?.time ? (
+                                <span>
+                                  {new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              ) : <span>Baru saja</span>}
                             </p>
                           </div>
                         ))}

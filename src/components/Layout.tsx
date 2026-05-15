@@ -232,7 +232,7 @@ export default function Layout({ children, user }: LayoutProps) {
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 mt-4 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
+                <div className="absolute right-0 sm:right-0 mt-4 w-[calc(100vw-2rem)] sm:w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50 transform translate-x-[-10px] sm:translate-x-0">
                   <div className="p-4 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
                     <span className="text-[10px] font-black uppercase tracking-widest text-[#002147]">Pemberitahuan Terkini</span>
                     {unreadCount > 0 && <span className="px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full uppercase tracking-widest">{unreadCount} BARU</span>}

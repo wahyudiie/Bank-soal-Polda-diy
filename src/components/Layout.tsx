@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { mockService } from '../services/mockService';
+import { supabaseService } from '../services/supabaseService';
+import { Database, Wifi, WifiOff } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,8 +23,22 @@ interface LayoutProps {
 
 export default function Layout({ children, user }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [isCloudActive, setIsCloudActive] = React.useState(supabaseService.isConnected());
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    // Initial check
+    const checkConn = async () => {
+      const active = await supabaseService.testConnection();
+      setIsCloudActive(active);
+    };
+    checkConn();
+
+    // Re-check periodically
+    const interval = setInterval(checkConn, 30000); // every 30s
+    return () => clearInterval(interval);
+  }, []);
 
   React.useEffect(() => {
     // Close sidebar on navigation on mobile
@@ -161,6 +177,17 @@ export default function Layout({ children, user }: LayoutProps) {
           </div>
 
           <div className="flex items-center gap-6">
+            {/* Database Status */}
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all duration-500",
+              isCloudActive 
+                ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                : "bg-red-50 text-red-600 border-red-100 animate-pulse"
+            )}>
+              {isCloudActive ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+              <span className="hidden sm:inline">{isCloudActive ? 'Cloud Terkoneksi' : 'Cloud Terputus'}</span>
+            </div>
+
             <button
               onClick={() => alert('Belum ada notifikasi baru untuk saat ini.')}
               className="relative p-2 text-gray-400 hover:text-blue-600 transition-colors"

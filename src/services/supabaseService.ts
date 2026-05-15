@@ -4,7 +4,19 @@ import { mockService } from './mockService';
 
 export const supabaseService = {
   // Helper to check if DB is connected
+  // Helper to check if DB is configured
   isConnected: () => !!supabase,
+
+  // Real check to see if we can actually reach the database
+  testConnection: async (): Promise<boolean> => {
+    if (!supabase) return false;
+    try {
+      const { error } = await supabase.from('categories').select('count', { count: 'exact', head: true });
+      return !error;
+    } catch (err) {
+      return false;
+    }
+  },
 
   // Categories
   getCategories: async (): Promise<QuestionCategory[]> => {
@@ -187,55 +199,69 @@ export const supabaseService = {
       if (!data || data.length === 0) return mockService.getAllUsers();
       return data;
     } catch (err) {
-      console.error(err);
+      console.error('Supabase getUsers error:', err);
+      // Fallback only if absolutely necessary, but we should know it failed
       return mockService.getAllUsers();
     }
   },
 
   login: async (username: string, password?: string): Promise<User | null> => {
-    if (!supabase) return mockService.login(username);
+    const cleanUsername = username.toLowerCase().trim();
+    if (!supabase) return mockService.login(cleanUsername);
     try {
       let query = supabase
         .from('users')
         .select('*')
-        .eq('username', username);
+        .eq('username', cleanUsername);
       
       if (password) {
         query = query.eq('password', password);
       }
       
       const { data, error } = await query.single();
-      if (error) throw error;
-      if (!data) return mockService.login(username);
+      if (error) {
+        console.warn('Supabase login failed, checking mock:', error.message);
+        return mockService.login(cleanUsername);
+      }
       return data;
     } catch (err) {
-      console.error(err);
-      return mockService.login(username);
+      console.error('Supabase login exception:', err);
+      return mockService.login(cleanUsername);
     }
   },
 
   createUser: async (user: Partial<User>): Promise<void> => {
+    const cleanUser = {
+      ...user,
+      username: user.username?.toLowerCase().trim()
+    };
+
     // Add to mock service to ensure it always exists locally
     try {
       const newUser = {
-        ...user,
-        id: Math.random().toString(36).substr(2, 9),
+        ...cleanUser,
+        id: cleanUser.id || Math.random().toString(36).substr(2, 9),
       } as User;
       const users = mockService.getAllUsers();
       localStorage.setItem('polda_diy_users', JSON.stringify([...users, newUser]));
     } catch (e) {}
 
-    if (!supabase) return;
+    if (!supabase) {
+      console.warn('Supabase not connected. User saved locally only.');
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('users')
-        .insert([user]);
-      if (error) throw error;
+        .insert([cleanUser]);
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw new Error(`Cloud sync failed: ${error.message}`);
+      }
     } catch (err) {
-      console.error(err);
-      // We already inserted into local storage above, so we just swallow the error 
-      // or we can throw it if we want the UI to show an error.
-      // But the user just wants the data to be saved and appear.
+      console.error('Supabase createUser exception:', err);
+      throw err; // Re-throw to inform the UI
     }
   },
 

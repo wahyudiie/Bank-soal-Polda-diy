@@ -671,15 +671,20 @@ export default function AdminDashboard() {
 
   const handleCreateUser = async (data: any) => {
     try {
-      await supabaseService.createUser(data);
+      const cleanData = {
+        ...data,
+        username: data.username.toLowerCase().trim()
+      };
+
+      await supabaseService.createUser(cleanData);
       refreshData();
       
       // Send notification email
-      if (data.email) {
-        notification('Mengirim Email...', `Sedang mengirimkan detail akun ke ${data.email}`);
+      if (cleanData.email) {
+        notification('Mengirim Email...', `Sedang mengirimkan detail akun ke ${cleanData.email}`);
         try {
-          await emailService.sendCredentialsEmail(data.email, data.name, data.username, data.password);
-          success('Email Terkirim!', `Detail akun berhasil dikirim ke ${data.email}`);
+          await emailService.sendCredentialsEmail(cleanData.email, cleanData.name, cleanData.username, cleanData.password);
+          success('Email Terkirim!', `Detail akun berhasil dikirim ke ${cleanData.email}`);
         } catch (emailErr: any) {
           console.error('Email failed:', emailErr);
           error('Email Gagal', `Pesan: ${emailErr.message || 'Cek konfigurasi EmailJS'}`);

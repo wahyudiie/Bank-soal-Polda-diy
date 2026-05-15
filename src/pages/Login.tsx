@@ -61,18 +61,17 @@ export default function Login() {
     try {
       // 1. Try Supabase
       let user = null;
-      if (supabaseService.isConnected()) {
+      const isConnected = supabaseService.isConnected();
+      
+      if (isConnected) {
         try {
           user = await supabaseService.login(inputUsername, password);
         } catch (supaErr) {
           console.error('Supabase login error:', supaErr);
-          // Don't throw, fall back to mock
         }
-      } else {
-        console.warn('Supabase not connected, using mock data only');
       }
 
-      // 2. Try Mock
+      // 2. Try Mock (Fallback)
       if (!user) {
         const users = mockService.getAllUsers();
         user = users.find(u => u.username.toLowerCase() === inputUsername) || null;
@@ -83,7 +82,11 @@ export default function Login() {
         if (user.role === 'ADMIN') navigate('/admin');
         else navigate('/dashboard');
       } else {
-        setError('ID PERSONEL TIDAK TERDAFTAR');
+        if (!isConnected) {
+          setError('KONEKSI DATABASE TERPUTUS. SILAKAN HUBUNGI ADMIN.');
+        } else {
+          setError('ID PERSONEL ATAU PASSWORD TIDAK TERDAFTAR');
+        }
       }
     } catch (err) {
       console.error('Login error:', err);

@@ -243,7 +243,7 @@ export const supabaseService = {
       let query = supabase
         .from('users')
         .select('*')
-        .eq('username', cleanUsername);
+        .ilike('username', cleanUsername);
       
       if (password) {
         query = query.eq('password', password);

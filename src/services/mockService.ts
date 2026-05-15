@@ -24,7 +24,7 @@ export const mockService = {
   // Auth
   login: (username: string): User | null => {
     const users = JSON.parse(localStorage.getItem(USERS_KEY) || JSON.stringify(INITIAL_USERS));
-    const user = users.find((u: User) => u.username === username);
+    const user = users.find((u: User) => u.username.toLowerCase() === username.toLowerCase());
     if (user) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       return user;

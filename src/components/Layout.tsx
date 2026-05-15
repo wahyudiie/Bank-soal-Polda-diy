@@ -49,6 +49,8 @@ export default function Layout({ children, user }: LayoutProps) {
     window.addEventListener('new-app-notification', handleNewNotif);
     return () => window.removeEventListener('new-app-notification', handleNewNotif);
   }, []);
+
+  React.useEffect(() => {
     // Initial check
     const checkConn = async () => {
       const active = await supabaseService.testConnection();

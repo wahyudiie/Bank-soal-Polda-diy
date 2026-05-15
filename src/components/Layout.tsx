@@ -24,10 +24,31 @@ interface LayoutProps {
 export default function Layout({ children, user }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isCloudActive, setIsCloudActive] = React.useState(supabaseService.isConnected());
+  const [notifications, setNotifications] = React.useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
   React.useEffect(() => {
+    const handleNewNotif = (e: any) => {
+      const { title, message } = e.detail;
+      setNotifications(prev => [
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          title,
+          message,
+          time: new Date(),
+          isRead: false
+        },
+        ...prev
+      ].slice(0, 10)); // Keep last 10
+    };
+
+    window.addEventListener('new-app-notification', handleNewNotif);
+    return () => window.removeEventListener('new-app-notification', handleNewNotif);
+  }, []);
     // Initial check
     const checkConn = async () => {
       const active = await supabaseService.testConnection();
@@ -188,21 +209,72 @@ export default function Layout({ children, user }: LayoutProps) {
               <span className="hidden sm:inline">{isCloudActive ? 'Cloud Terkoneksi' : 'Cloud Terputus'}</span>
             </div>
 
-            <button
-              onClick={() => alert('Belum ada notifikasi baru untuk saat ini.')}
-              className="relative p-2 text-gray-400 hover:text-blue-600 transition-colors"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-            </button>
+            {/* Notification Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowNotifications(!showNotifications);
+                  if (!showNotifications) {
+                    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                  }
+                }}
+                className={cn(
+                  "p-2 hover:bg-gray-50 rounded-lg transition-all relative",
+                  unreadCount > 0 ? "text-blue-600" : "text-gray-400"
+                )}
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-bounce" />
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-4 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
+                  <div className="p-4 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#002147]">Pemberitahuan Terkini</span>
+                    {unreadCount > 0 && <span className="px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded-full uppercase tracking-widest">{unreadCount} BARU</span>}
+                  </div>
+                  <div className="max-h-[400px] overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      <div className="divide-y divide-gray-50">
+                        {notifications.map((n) => (
+                          <div key={n.id} className="p-4 hover:bg-gray-50 transition-colors cursor-default">
+                            <p className="text-[10px] font-black text-[#002147] uppercase tracking-wide mb-1">{n.title}</p>
+                            <p className="text-[10px] text-gray-500 leading-relaxed font-semibold">{n.message}</p>
+                            <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-12 text-center">
+                        <Bell className="w-8 h-8 text-gray-100 mx-auto mb-4" />
+                        <p className="text-[9px] text-gray-300 font-black uppercase tracking-widest italic">Belum ada notifikasi baru</p>
+                      </div>
+                    )}
+                  </div>
+                  {notifications.length > 0 && (
+                    <button 
+                      onClick={() => setNotifications([])}
+                      className="w-full py-3 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-red-500 border-t border-gray-50 transition-colors"
+                    >
+                      Bersihkan Semua
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             {user.role === 'ADMIN' && (
-              <button
-                onClick={() => navigate('/admin/questions')}
+              <Link
+                to="/admin/questions"
                 className="hidden sm:block bg-[#002147] text-white px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-blue-600 transition-all shadow-lg shadow-blue-900/10"
               >
                 + Upload Soal Baru
-              </button>
+              </Link>
             )}
           </div>
         </header>

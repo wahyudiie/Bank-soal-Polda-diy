@@ -697,10 +697,19 @@ export default function AdminDashboard() {
         if ((latest || []).length > prevResultCount && prevResultCount > 0) {
           const newest = (latest || [])[0]; // results are ordered by completed_at desc
           if (newest) {
+            // Internal toast notification
             notification(
               `Ujian Baru Selesai!`,
               `${newest.userName || 'Seseorang'} telah menyelesaikan ujian "${newest.questionTitle || 'Materi'}" dengan skor ${newest.score || 0}.`
             );
+
+            // Global event for the Bell Icon in Layout
+            window.dispatchEvent(new CustomEvent('new-app-notification', {
+              detail: {
+                title: 'Ujian Selesai',
+                message: `${newest.userName || 'Seseorang'} menyelesaikan ${newest.questionTitle || 'ujian'} (Skor: ${newest.score})`
+              }
+            }));
           }
         }
         setPrevResultCount((latest || []).length);
@@ -796,6 +805,14 @@ export default function AdminDashboard() {
       await supabaseService.createUser(cleanData);
       refreshData();
       
+      // Global notification for history
+      window.dispatchEvent(new CustomEvent('new-app-notification', {
+        detail: {
+          title: 'Personel Baru',
+          message: `Berhasil mendaftarkan ${cleanData.name} (${cleanData.username})`
+        }
+      }));
+
       // Send notification email
       if (cleanData.email) {
         notification('Mengirim Email...', `Sedang mengirimkan detail akun ke ${cleanData.email}`);

@@ -660,6 +660,28 @@ const ManageUsers = ({ users, onDelete, onCreate }: { users: User[], onDelete: (
                     </div>
                   </div>
                 </div>
+                <div className="pt-4 border-t border-gray-50 flex flex-col gap-3">
+                  <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest text-center">Masalah Pengiriman?</p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!formData.email) {
+                        alert('Masukkan email dulu untuk mengetes.');
+                        return;
+                      }
+                      notification('Mengetes...', `Mengirim email uji coba ke ${formData.email.trim()}...`);
+                      const res = await emailService.sendTestEmail(formData.email);
+                      if (res.success) {
+                        success('Koneksi OK!', 'Email uji coba berhasil dikirim. Cek inbox/spam.');
+                      } else {
+                        error('Koneksi Gagal', `Error: ${res.error}`);
+                      }
+                    }}
+                    className="w-full bg-white border border-gray-200 text-gray-500 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all"
+                  >
+                    Cek Koneksi Email (Diagnostic)
+                  </button>
+                </div>
                 <button
                   type="submit"
                   className="w-full bg-[#002147] text-white font-black py-4 rounded-xl shadow-xl hover:bg-blue-600 transition-all text-[11px] uppercase tracking-[0.3em]"
@@ -800,7 +822,8 @@ export default function AdminDashboard() {
     try {
       const cleanData = {
         ...data,
-        username: data.username.toLowerCase().trim()
+        username: data.username.toLowerCase().trim(),
+        email: data.email?.trim()
       };
 
       await supabaseService.createUser(cleanData);
